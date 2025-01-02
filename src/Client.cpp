@@ -2,11 +2,11 @@
 
 //####### CONSTRUCTORS & DESTRUCTOR
 
-Client::Client(){
+Client::Client() /*: _isRegistered(0)*/{
 
 }
 
-Client::Client(Client const &src){
+Client::Client(Client const &src) {
     *this = src;
 }
 
@@ -34,4 +34,8 @@ void Client::setFd(int fd){
 
 void Client::setIpAdd(std::string ipadd){
     this->IPadd = ipadd;
+}
+
+void Client::setBuffer(std::string received){
+    this->_buffer += received; 
 }

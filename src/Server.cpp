@@ -107,6 +107,8 @@ void Server::AcceptNewClient(){
     clients.push_back(cli);
     fds.push_back(NewPoll);
 
+    std::string response = "Please type the password\n";
+    send(incomingfd, response.c_str(), response.size(), 0);
     std::cout << GRE << "Client " << incomingfd << " connected" << WHI << std::endl;
 
 }
@@ -123,6 +125,7 @@ void Server::ReceiveNewData(int fd){
     }
     else
     {
+        parse_data(buff);
         buff[bytes] = '\0';
         std::cout << YEL << "Client " << fd << " data : " << WHI << buff;
         //PROCESS THE DATA HERE

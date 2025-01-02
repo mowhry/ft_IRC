@@ -17,7 +17,10 @@ class Client
         std::string IPadd;
         std::string _nickname;
         std::string _username;
-    
+        std::string _buffer;
+
+        //bool _isRegistered;
+   
     public : 
         Client();
         Client(Client const &src);
@@ -29,4 +32,5 @@ class Client
 
         void setFd(int fd);
         void setIpAdd(std::string ipadd);
+        void setBuffer(std::string received);
 };
