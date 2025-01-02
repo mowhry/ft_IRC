@@ -44,6 +44,7 @@ class Server{
         void SerSocket();
         void AcceptNewClient();
         void ReceiveNewData(int fd);
+        void ParseData(std::string buff);
 
         static void SignalHandler(int signum);
 

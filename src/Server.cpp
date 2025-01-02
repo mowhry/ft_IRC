@@ -125,13 +125,17 @@ void Server::ReceiveNewData(int fd){
     }
     else
     {
-        parse_data(buff);
+        ParseData(buff);
         buff[bytes] = '\0';
         std::cout << YEL << "Client " << fd << " data : " << WHI << buff;
         //PROCESS THE DATA HERE
 
     }
 
+
+}
+
+void    Server::ParseData(std::string buff, int fd){
 
 }
 
