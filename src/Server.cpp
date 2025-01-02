@@ -2,12 +2,16 @@
 
 //####### CONSTRUCTORS & DESTRUCTOR
 
-Server::Server(){
-
-}
-
 Server::Server(Server const &src){
     *this = src;
+}
+
+
+Server::Server(std::string name, std::string port, std::string password) 
+{
+    this->_name = name;
+    this->_port = atoi(port.c_str());
+    this->_password = password;
 }
 
 Server::~Server(){
@@ -17,7 +21,7 @@ Server::~Server(){
 //####### OPERATOR OVERLOAD
 
 Server & Server::operator=(Server const & src){
-    this->Port = src.Port;
+    this->_port = src._port;
     this->SerSocketFd = src.SerSocketFd;
     this->Signal = src.Signal;
     this->clients = src.clients;
@@ -25,10 +29,16 @@ Server & Server::operator=(Server const & src){
     return (*this);
 }
 
+//####### GETTERS
+
+std::string Server::getName(){
+    return(this->_name);
+}
+
 //####### FUNCTIONS
 
 void Server::SerInit(){
-    this->Port = 4444;
+   // this->_port = 4444;
     SerSocket();
 
     std::cout << GRE << "Server " << SerSocketFd << " connected" << std::endl;
@@ -46,7 +56,6 @@ void Server::SerInit(){
                     ReceiveNewData((fds[i].fd));
             }
         }
-
     }
     CloseFds();
 }
@@ -56,7 +65,7 @@ void Server::SerSocket(){
     struct pollfd NewPoll;
 
     add.sin_family = AF_INET;
-    add.sin_port = htons(this->Port);
+    add.sin_port = htons(this->_port);
     add.sin_addr.s_addr = INADDR_ANY;
 
     SerSocketFd = socket(AF_INET, SOCK_STREAM, 0);

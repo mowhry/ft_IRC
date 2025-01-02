@@ -15,6 +15,8 @@ class Client
     private:
         int fd;
         std::string IPadd;
+        std::string _nickname;
+        std::string _username;
     
     public : 
         Client();

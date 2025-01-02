@@ -11,6 +11,7 @@
 #include <arpa/inet.h> 
 #include <poll.h> 
 #include <csignal> 
+#include <cstdlib>
 #include <stdio.h>
 #include <string.h>
 #include "./Client.hpp"
@@ -23,7 +24,9 @@
 class Server{
 
     private : 
-        int Port;
+        int _port;
+        std::string _name;
+        std::string _password;
         int SerSocketFd;
         static bool Signal;
         std::vector<Client> clients;
@@ -31,6 +34,7 @@ class Server{
     
     public : 
         Server();
+        Server(std::string name, std::string port, std::string password);
         Server(Server const &src);
         ~Server();
 
@@ -42,6 +46,8 @@ class Server{
         void ReceiveNewData(int fd);
 
         static void SignalHandler(int signum);
+
+        std::string getName();
 
         void CloseFds();
         void ClearClients(int fd);

@@ -3,10 +3,15 @@
 
 bool Server::Signal = false;
 
-int main()
+int main(int ac, char **av)
 {
-Server ser;
-std::cout <<" -----SERVER----- "<< std::endl;
+    if (ac != 3)
+    {
+        std::cout << "Usage : ./ircserv <port> <password>" << std::endl;
+        return (-1);
+    }
+Server ser("SERVER DE OUF", av[1], av[2]);
+std::cout <<" -----"<< ser.getName() <<"----- "<< std::endl;
 
     try{
         signal(SIGINT, Server::SignalHandler);

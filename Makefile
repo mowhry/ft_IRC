@@ -1,5 +1,5 @@
 SRC = $(wildcard ./src/*.cpp)
-NAME = irc
+NAME = ircserv
 OBJ_DIR = obj
 OBJ = $(patsubst ./src/%.cpp, $(OBJ_DIR)/%.o, $(SRC))
 
