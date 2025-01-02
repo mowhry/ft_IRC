@@ -19,7 +19,7 @@ class Client
         std::string _username;
         std::string _buffer;
 
-        //bool _isRegistered;
+        bool _isRegistered;
    
     public : 
         Client();
@@ -28,9 +28,14 @@ class Client
 
         Client & operator=(Client const &src);
 
+        void clearBuffer();
+
         int getFd();
+        std::string getBuffer();
+        bool getRegister();
 
         void setFd(int fd);
+        void setRegister(bool Registered);
         void setIpAdd(std::string ipadd);
         void setBuffer(std::string received);
 };

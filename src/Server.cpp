@@ -1,5 +1,6 @@
 #include "../include/Server.hpp"
 
+
 //####### CONSTRUCTORS & DESTRUCTOR
 
 Server::Server(Server const &src){
@@ -35,6 +36,14 @@ std::string Server::getName(){
     return(this->_name);
 }
 
+Client *Server::getClient(int fd){
+    for (size_t i = 0; i < this->clients.size(); i++){
+        if (this->clients[i].getFd() == fd){
+            return &this->clients[i]; 
+        }
+    }
+    return NULL;
+}
 //####### FUNCTIONS
 
 void Server::SerInit(){
@@ -114,8 +123,10 @@ void Server::AcceptNewClient(){
 }
 
 void Server::ReceiveNewData(int fd){
+    std::vector<std::string> cmd;
     char buff[1024];
     memset(buff, 0, sizeof(buff));
+    Client *cli = getClient(fd);
 
     ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0);
     if(bytes <= 0){
@@ -125,9 +136,17 @@ void Server::ReceiveNewData(int fd){
     }
     else
     {
-        ParseData(buff);
-        buff[bytes] = '\0';
-        std::cout << YEL << "Client " << fd << " data : " << WHI << buff;
+        cli->setBuffer(buff);
+        if (cli->getBuffer().find_first_of("\r\n") == std::string::npos)
+                return;
+        cmd = ParseData(cli->getBuffer());
+        for (size_t i = 0; i < cmd.size(); i++)
+           this->exec(cmd[i], fd);
+           // std::cout << i << ": " << this->(cmd[i]) << std::endl;
+        if (getClient(fd))
+            getClient(fd)->clearBuffer();
+        //buff[bytes] = '\0';
+        //std::cout << YEL << "Client " << fd << " data : " << WHI << buff;
         //PROCESS THE DATA HERE
 
     }
@@ -135,8 +154,55 @@ void Server::ReceiveNewData(int fd){
 
 }
 
-void    Server::ParseData(std::string buff, int fd){
+std::vector<std::string> Server::split(std::string &str){
+    std::vector<std::string> cmd;
+    std::istringstream stm(str);
+    std::string token;
 
+    while(stm >> token){
+        cmd.push_back(token);
+        token.clear();
+    }
+    return cmd;
+}
+
+void Server::exec(std::string &cmd, int fd){
+    if (cmd.empty())
+        return;
+    std::vector<std::string> splitted_cmd;
+    splitted_cmd = this->split(cmd);
+   /* for(size_t i = 0; i < splitted_cmd.size(); i++)
+    {
+        std::cout << fd << ": " << i << ": " << splitted_cmd[i] << std::endl;
+    }*/
+   size_t check = cmd.find_first_not_of(" \t\r");
+   if (check != std::string::npos)
+        cmd = cmd.substr(check);
+    if(splitted_cmd.size() && (splitted_cmd[0] == "PASS" || splitted_cmd[0] == "pass"))
+        auth_cmd(cmd, fd);
+    
+
+    return;
+    
+}
+
+std::vector<std::string>   Server::ParseData(std::string buff){
+    std::vector<std::string> cmd;
+
+    std::istringstream stream(buff);
+    std::string str;
+    while(std::getline(stream, str)){
+        size_t pos = str.find_first_of("\n\r");
+        if (pos != std::string::npos){
+            str = str.substr(0, pos);
+        }
+        cmd.push_back(str);
+    }
+    return (cmd);
+}
+
+void Server::SendResponse(int fd, std::string str){
+ send(fd, str.c_str(), str.size(), 0);
 }
 
 //####### SIGNALS

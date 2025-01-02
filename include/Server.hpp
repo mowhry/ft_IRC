@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <string.h>
+#include <sstream>
 #include "./Client.hpp"
 
 #define RED "\e[1;31m" 
@@ -44,12 +45,19 @@ class Server{
         void SerSocket();
         void AcceptNewClient();
         void ReceiveNewData(int fd);
-        void ParseData(std::string buff);
+        void SendResponse(int fd, std::string str);
+        std::vector<std::string> ParseData(std::string buff);
+        std::vector<std::string> split(std::string &cmd);
+        void exec(std::string &cmd, int fd);
+
+        void auth_cmd(std::string cmd, int fd);
+
 
         static void SignalHandler(int signum);
 
         std::string getName();
-
+        Client  *getClient(int fd);
+        
         void CloseFds();
         void ClearClients(int fd);
 };
