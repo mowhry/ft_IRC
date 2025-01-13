@@ -154,6 +154,7 @@ void Server::ReceiveNewData(int fd){
 
 }
 
+//##### PARSING
 std::vector<std::string> Server::split(std::string &str){
     std::vector<std::string> cmd;
     std::istringstream stm(str);
@@ -201,8 +202,11 @@ std::vector<std::string>   Server::ParseData(std::string buff){
     return (cmd);
 }
 
+
 void Server::SendResponse(int fd, std::string str){
- send(fd, str.c_str(), str.size(), 0);
+ if(send(fd, str.c_str(), str.size(), 0) == -1)
+  std::cerr << "reply send() failed" << std::endl;
+    
 }
 
 //####### SIGNALS

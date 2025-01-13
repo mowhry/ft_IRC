@@ -16,6 +16,7 @@
 #include <string.h>
 #include <sstream>
 #include "./Client.hpp"
+#include "./Replies.hpp"
 
 #define RED "\e[1;31m" 
 #define WHI "\e[0;37m" 
