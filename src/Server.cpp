@@ -116,7 +116,7 @@ void Server::AcceptNewClient(){
     clients.push_back(cli);
     fds.push_back(NewPoll);
 
-    std::string response = "Please type the password\n";
+    std::string response = "Welcome\n";
     send(incomingfd, response.c_str(), response.size(), 0);
     std::cout << GRE << "Client " << incomingfd << " connected" << WHI << std::endl;
 
