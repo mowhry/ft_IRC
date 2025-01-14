@@ -55,7 +55,7 @@ class Server{
 
         void cmd_auth(std::string cmd, int fd);
         void cmd_quit(std::string cmd, int fd);
-        void cmd_user(std::vector<std::string> splitted_cmd, int fd);
+        void cmd_user(std::string cmd, int fd);
         void cmd_nick(std::vector<std::string> splitted_cmd, int fd);
 
 

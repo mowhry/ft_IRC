@@ -121,7 +121,7 @@ void Server::AcceptNewClient(){
     clients.push_back(cli);
     fds.push_back(NewPoll);
 
-    SendResponse(incomingfd, RPL_CONNECTED((getClient(incomingfd)->getNickname())));
+    //SendResponse(incomingfd, RPL_CONNECTED((getClient(incomingfd)->getNickname())));
     std::cout << GRE << "Client " << incomingfd << " connected" << WHI << std::endl;
 
 
@@ -192,7 +192,7 @@ void Server::exec(std::string &cmd, int fd){
     if(splitted_cmd.size() && (splitted_cmd[0] == "PASS" || splitted_cmd[0] == "pass"))
         cmd_auth(cmd, fd);
     else if(splitted_cmd.size() && (splitted_cmd[0] == "USER" || splitted_cmd[0] == "userhost")){
-        cmd_user(splitted_cmd, fd);
+        cmd_user(cmd, fd);
     }
     else if(splitted_cmd.size() && (splitted_cmd[0] == "NICK" || splitted_cmd[0] == "nick"))
         cmd_nick(splitted_cmd, fd);
