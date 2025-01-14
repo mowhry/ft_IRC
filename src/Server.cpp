@@ -176,10 +176,13 @@ void Server::exec(std::string &cmd, int fd){
         return;
     std::vector<std::string> splitted_cmd;
     splitted_cmd = split(cmd);
-   for(size_t i = 0; i < splitted_cmd.size(); i++)
+
+    //UNCOMMENT TO SEE WHAT YOU RECEIVE FROM THE CLIENT
+   /*for(size_t i = 0; i < splitted_cmd.size(); i++)
     {
         std::cout << fd << ": " << i << ": " << splitted_cmd[i] << std::endl;
-    }
+    }*/
+   
    size_t check = cmd.find_first_not_of(" \t\r");
     if (check != std::string::npos)
         cmd = cmd.substr(check);
