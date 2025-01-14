@@ -121,8 +121,9 @@ void Server::AcceptNewClient(){
     clients.push_back(cli);
     fds.push_back(NewPoll);
 
-   SendResponse(incomingfd, ": 001 * :Welcome to Serveur 2 ouf\r\n");
+    SendResponse(incomingfd, RPL_CONNECTED((getClient(incomingfd)->getNickname())));
     std::cout << GRE << "Client " << incomingfd << " connected" << WHI << std::endl;
+
 
 }
 
@@ -186,7 +187,7 @@ void Server::exec(std::string &cmd, int fd){
    size_t check = cmd.find_first_not_of(" \t\r");
     if (check != std::string::npos)
         cmd = cmd.substr(check);
-    if(splitted_cmd.size() && (splitted_cmd[0] == "BONG" || splitted_cmd[0] == "bong"))
+    if(splitted_cmd.size() && (splitted_cmd[0] == "PING" || splitted_cmd[0] == "ping"))
 		return;
     if(splitted_cmd.size() && (splitted_cmd[0] == "PASS" || splitted_cmd[0] == "pass"))
         cmd_auth(cmd, fd);
@@ -199,6 +200,7 @@ void Server::exec(std::string &cmd, int fd){
         cmd_quit(cmd, fd);
     else if (getClient(fd)->getRegister() == true)
     {
+
         SendResponse(fd, "you are registered");
         // FUNCTIONS THAT NEED YOU TO BE LOGGED IN
     }
