@@ -51,7 +51,8 @@ class Server{
         std::vector<std::string> split(std::string &cmd);
         void exec(std::string &cmd, int fd);
 
-        void auth_cmd(std::string cmd, int fd);
+        void cmd_auth(std::string cmd, int fd);
+        void cmd_quit(std::string cmd, int fd);
 
 
         static void SignalHandler(int signum);

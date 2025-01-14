@@ -116,7 +116,7 @@ void Server::AcceptNewClient(){
     clients.push_back(cli);
     fds.push_back(NewPoll);
 
-    //SendResponse(incomingfd, "Welcome");
+   SendResponse(incomingfd, ": 001 * :  Welcome to Serveur 2 ouf\r\n");
     std::cout << GRE << "Client " << incomingfd << " connected" << WHI << std::endl;
 
 }
@@ -181,13 +181,13 @@ void Server::exec(std::string &cmd, int fd){
     if(splitted_cmd.size() && (splitted_cmd[0] == "BONG" || splitted_cmd[0] == "bong"))
 		return;
     else if(splitted_cmd.size() && (splitted_cmd[0] == "PASS" || splitted_cmd[0] == "pass"))
-        auth_cmd(cmd, fd);
+        cmd_auth(cmd, fd);
     else if(splitted_cmd.size() && (splitted_cmd[0] == "USER" || splitted_cmd[0] == "user"))
         getClient(fd)->setUser(splitted_cmd[1]);
     else if(splitted_cmd.size() && (splitted_cmd[0] == "NICK" || splitted_cmd[0] == "nick"))
         getClient(fd)->setNickname(splitted_cmd[1]);
     else if(splitted_cmd.size() && (splitted_cmd[0] == "QUIT" || splitted_cmd[0] == "quit"))
-        CloseFds();
+        cmd_quit(cmd, fd);
    else if (getClient(fd)->getRegister() == true)
     {
         SendResponse(fd, "you are registered");

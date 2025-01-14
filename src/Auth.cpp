@@ -2,7 +2,7 @@
 #include "../include/Client.hpp"
 
 
-void Server::auth_cmd(std::string cmd, int fd){
+void Server::cmd_auth(std::string cmd, int fd){
     
     Client *cli = getClient(fd);
     cmd = cmd.substr(4);
@@ -25,4 +25,11 @@ void Server::auth_cmd(std::string cmd, int fd){
     }
     else
         SendResponse(fd, "Already Registered\n");
+}
+
+void Server::cmd_quit(std::string cmd, int fd){
+        (void) cmd;
+        std::cout << RED << "Client " << fd << " disconnected" << WHI << std::endl;
+        ClearClients(fd);
+        close(fd);
 }
