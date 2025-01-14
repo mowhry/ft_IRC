@@ -188,9 +188,9 @@ void Server::exec(std::string &cmd, int fd){
     else if(splitted_cmd.size() && (splitted_cmd[0] == "PASS" || splitted_cmd[0] == "pass"))
         cmd_auth(cmd, fd);
     else if(splitted_cmd.size() && (splitted_cmd[0] == "USER" || splitted_cmd[0] == "user"))
-        getClient(fd)->setUser(splitted_cmd[1]);
+        cmd_user(splitted_cmd, fd);
     else if(splitted_cmd.size() && (splitted_cmd[0] == "NICK" || splitted_cmd[0] == "nick"))
-        getClient(fd)->setNickname(splitted_cmd[1]);
+        cmd_nick(splitted_cmd, fd);
     else if(splitted_cmd.size() && (splitted_cmd[0] == "QUIT" || splitted_cmd[0] == "quit"))
         cmd_quit(cmd, fd);
     else if (getClient(fd)->getRegister() == true)
