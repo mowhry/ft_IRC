@@ -20,6 +20,7 @@ class Client
         std::string _buffer;
 
         bool _isRegistered;
+        bool _isLogged;
    
     public : 
         Client();
@@ -33,11 +34,13 @@ class Client
         int getFd();
         std::string getBuffer();
         bool getRegister();
+        bool getLog();
         std::string getNickname();
         std::string getUser();
 
         void setFd(int fd);
         void setRegister(bool Registered);
+        void setLog (bool Logged);
         void setIpAdd(std::string ipadd);
         void setBuffer(std::string received);
         void setUser(std::string username);

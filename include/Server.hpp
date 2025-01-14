@@ -50,6 +50,8 @@ class Server{
         std::vector<std::string> ParseData(std::string buff);
         std::vector<std::string> split(std::string &cmd);
         void exec(std::string &cmd, int fd);
+        bool IsValidNick(std::string nickname, int fd);
+
 
         void cmd_auth(std::string cmd, int fd);
         void cmd_quit(std::string cmd, int fd);

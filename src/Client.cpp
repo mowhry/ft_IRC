@@ -50,6 +50,10 @@ bool    Client::getRegister(){
     return (this->_isRegistered);
 }
 
+bool    Client::getLog(){
+    return (this->_isLogged);
+}
+
 void Client::setFd(int fd){
     this->fd = fd;
 }
@@ -57,6 +61,12 @@ void Client::setFd(int fd){
 void Client::setRegister(bool Registered){
     this->_isRegistered = Registered;
 }
+
+
+void Client::setLog(bool Logged){
+    this->_isLogged = Logged;
+}
+
 void Client::setIpAdd(std::string ipadd){
     this->IPadd = ipadd;
 }

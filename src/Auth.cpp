@@ -27,3 +27,24 @@ void Server::cmd_auth(std::string cmd, int fd){
         SendResponse(fd, "Already Registered\n");
 }
 
+bool Server::IsValidNick(std::string nickname, int fd){
+
+    if(nickname.empty() || nickname[0] == '&' || nickname[0] == ':' || nickname[0] == '#')
+        return false;
+    for (size_t i = 0; i < nickname.size(); i++)
+    {
+        if(!std::isalnum(nickname[i] && nickname[i] != '_'))
+        {
+            SendResponse(fd, ERR_INVALIDNICK(nickname));
+            return false;
+        }
+    }
+    for(size_t i = 0; i < clients.size(); i++)
+    {
+        if (this->clients[i].getNickname() == nickname)
+        {
+            SendResponse(fd, ERR_NICKALREADYUSED(nickname));
+            return false;
+        }
+    }
+}
