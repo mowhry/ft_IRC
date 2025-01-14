@@ -121,7 +121,7 @@ void Server::AcceptNewClient(){
     clients.push_back(cli);
     fds.push_back(NewPoll);
 
-   SendResponse(incomingfd, ": 001 * :  Welcome to Serveur 2 ouf\r\n");
+   SendResponse(incomingfd, ": 001 * :Welcome to Serveur 2 ouf\r\n");
     std::cout << GRE << "Client " << incomingfd << " connected" << WHI << std::endl;
 
 }
@@ -178,20 +178,21 @@ void Server::exec(std::string &cmd, int fd){
     splitted_cmd = split(cmd);
 
     //UNCOMMENT TO SEE WHAT YOU RECEIVE FROM THE CLIENT
-   /*for(size_t i = 0; i < splitted_cmd.size(); i++)
+   for(size_t i = 0; i < splitted_cmd.size(); i++)
     {
         std::cout << fd << ": " << i << ": " << splitted_cmd[i] << std::endl;
-    }*/
+    }
    
    size_t check = cmd.find_first_not_of(" \t\r");
     if (check != std::string::npos)
         cmd = cmd.substr(check);
     if(splitted_cmd.size() && (splitted_cmd[0] == "BONG" || splitted_cmd[0] == "bong"))
 		return;
-    else if(splitted_cmd.size() && (splitted_cmd[0] == "PASS" || splitted_cmd[0] == "pass"))
+    if(splitted_cmd.size() && (splitted_cmd[0] == "PASS" || splitted_cmd[0] == "pass"))
         cmd_auth(cmd, fd);
-    else if(splitted_cmd.size() && (splitted_cmd[0] == "USER" || splitted_cmd[0] == "user"))
+    else if(splitted_cmd.size() && (splitted_cmd[0] == "USER" || splitted_cmd[0] == "userhost")){
         cmd_user(splitted_cmd, fd);
+    }
     else if(splitted_cmd.size() && (splitted_cmd[0] == "NICK" || splitted_cmd[0] == "nick"))
         cmd_nick(splitted_cmd, fd);
     else if(splitted_cmd.size() && (splitted_cmd[0] == "QUIT" || splitted_cmd[0] == "quit"))
@@ -199,11 +200,11 @@ void Server::exec(std::string &cmd, int fd){
     else if (getClient(fd)->getRegister() == true)
     {
         SendResponse(fd, "you are registered");
-        // FUNCTIONS THAT NEED TO BE LOGGED IN
+        // FUNCTIONS THAT NEED YOU TO BE LOGGED IN
     }
     else if (getClient(fd)->getRegister() == false)
     {
-        SendResponse(fd, ": 451 * : You have not registered \r\n");
+        SendResponse(fd, ERR_NOTREGISTERED(getClient(fd)->getNickname()));
     }
     return;
     

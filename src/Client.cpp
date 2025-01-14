@@ -2,7 +2,7 @@
 
 //####### CONSTRUCTORS & DESTRUCTOR
 
-Client::Client() : _isRegistered(false){
+Client::Client() : _nickname ("*"),  _isRegistered(false){
 
 }
 
