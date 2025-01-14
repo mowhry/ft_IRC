@@ -2,7 +2,7 @@
 
 //####### CONSTRUCTORS & DESTRUCTOR
 
-Client::Client() : _isRegistered(0){
+Client::Client() : _isRegistered(false){
 
 }
 
@@ -38,6 +38,14 @@ std::string Client::getBuffer(){
     return this->_buffer;
 }
 
+std::string Client::getNickname(){
+    return this->_nickname;
+} 
+
+std::string Client::getUser(){
+    return this->_username;
+} 
+
 bool    Client::getRegister(){
     return (this->_isRegistered);
 }
@@ -55,4 +63,12 @@ void Client::setIpAdd(std::string ipadd){
 
 void Client::setBuffer(std::string received){
     this->_buffer += received; 
+}
+
+void Client::setUser(std::string username){
+    this->_username = username;
+}
+
+void Client::setNickname(std::string nickname){
+    this->_nickname = nickname;
 }

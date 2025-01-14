@@ -33,9 +33,13 @@ class Client
         int getFd();
         std::string getBuffer();
         bool getRegister();
+        std::string getNickname();
+        std::string getUser();
 
         void setFd(int fd);
         void setRegister(bool Registered);
         void setIpAdd(std::string ipadd);
         void setBuffer(std::string received);
+        void setUser(std::string username);
+        void setNickname(std::string nickname);
 };

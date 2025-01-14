@@ -116,8 +116,7 @@ void Server::AcceptNewClient(){
     clients.push_back(cli);
     fds.push_back(NewPoll);
 
-    std::string response = "Welcome\n";
-    send(incomingfd, response.c_str(), response.size(), 0);
+    //SendResponse(incomingfd, "Welcome");
     std::cout << GRE << "Client " << incomingfd << " connected" << WHI << std::endl;
 
 }
@@ -171,18 +170,33 @@ void Server::exec(std::string &cmd, int fd){
     if (cmd.empty())
         return;
     std::vector<std::string> splitted_cmd;
-    splitted_cmd = this->split(cmd);
-   /* for(size_t i = 0; i < splitted_cmd.size(); i++)
+    splitted_cmd = split(cmd);
+   /*for(size_t i = 0; i < splitted_cmd.size(); i++)
     {
         std::cout << fd << ": " << i << ": " << splitted_cmd[i] << std::endl;
     }*/
    size_t check = cmd.find_first_not_of(" \t\r");
-   if (check != std::string::npos)
+    if (check != std::string::npos)
         cmd = cmd.substr(check);
-    if(splitted_cmd.size() && (splitted_cmd[0] == "PASS" || splitted_cmd[0] == "pass"))
+    if(splitted_cmd.size() && (splitted_cmd[0] == "BONG" || splitted_cmd[0] == "bong"))
+		return;
+    else if(splitted_cmd.size() && (splitted_cmd[0] == "PASS" || splitted_cmd[0] == "pass"))
         auth_cmd(cmd, fd);
-    
-
+    else if(splitted_cmd.size() && (splitted_cmd[0] == "USER" || splitted_cmd[0] == "user"))
+        getClient(fd)->setUser(splitted_cmd[1]);
+    else if(splitted_cmd.size() && (splitted_cmd[0] == "NICK" || splitted_cmd[0] == "nick"))
+        getClient(fd)->setNickname(splitted_cmd[1]);
+    else if(splitted_cmd.size() && (splitted_cmd[0] == "QUIT" || splitted_cmd[0] == "quit"))
+        CloseFds();
+   else if (getClient(fd)->getRegister() == true)
+    {
+        SendResponse(fd, "you are registered");
+        // FUNCTIONS THAT NEED TO BE LOGGED IN
+    }
+    else if (getClient(fd)->getRegister() == false)
+    {
+        SendResponse(fd, ": 451 * : You have not registered \r\n");
+    }
     return;
     
 }
@@ -202,6 +216,7 @@ std::vector<std::string>   Server::ParseData(std::string buff){
     return (cmd);
 }
 
+//####### REPLY
 
 void Server::SendResponse(int fd, std::string str){
  if(send(fd, str.c_str(), str.size(), 0) == -1)
