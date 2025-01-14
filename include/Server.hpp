@@ -59,6 +59,7 @@ class Server{
 
         std::string getName();
         Client  *getClient(int fd);
+        std::string getPassword();
         
         void CloseFds();
         void ClearClients(int fd);

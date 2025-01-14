@@ -16,7 +16,7 @@ void Server::cmd_auth(std::string cmd, int fd){
     }
     if (!cli->getRegister())
     {
-        if (cmd == _password){
+        if (cmd == getPassword()){
             cli->setRegister(true);
             SendResponse(fd, "Connected\n");
         }

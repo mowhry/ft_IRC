@@ -44,6 +44,11 @@ Client *Server::getClient(int fd){
     }
     return NULL;
 }
+
+std::string Server::getPassword(){
+    return this->_password;
+}
+
 //####### FUNCTIONS
 
 void Server::SerInit(){
@@ -171,10 +176,10 @@ void Server::exec(std::string &cmd, int fd){
         return;
     std::vector<std::string> splitted_cmd;
     splitted_cmd = split(cmd);
-   /*for(size_t i = 0; i < splitted_cmd.size(); i++)
+   for(size_t i = 0; i < splitted_cmd.size(); i++)
     {
         std::cout << fd << ": " << i << ": " << splitted_cmd[i] << std::endl;
-    }*/
+    }
    size_t check = cmd.find_first_not_of(" \t\r");
     if (check != std::string::npos)
         cmd = cmd.substr(check);
@@ -188,7 +193,7 @@ void Server::exec(std::string &cmd, int fd){
         getClient(fd)->setNickname(splitted_cmd[1]);
     else if(splitted_cmd.size() && (splitted_cmd[0] == "QUIT" || splitted_cmd[0] == "quit"))
         cmd_quit(cmd, fd);
-   else if (getClient(fd)->getRegister() == true)
+    else if (getClient(fd)->getRegister() == true)
     {
         SendResponse(fd, "you are registered");
         // FUNCTIONS THAT NEED TO BE LOGGED IN
