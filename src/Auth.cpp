@@ -25,8 +25,7 @@ void Server::cmd_auth(std::string cmd, int fd){
             SendResponse(fd, ERR_INCORRECTPASS(std::string("*")));
     }
     else
-          return;
-          //SendResponse(fd, ERR_ALREADYREGISTERED(getClient(fd)->getNickname()));
+          SendResponse(fd, ERR_ALREADYREGISTERED(getClient(fd)->getNickname()));
 }
 
 bool Server::IsValidNick(std::string nickname, int fd){
@@ -67,6 +66,7 @@ void Server::cmd_nick(std::vector<std::string> splitted_cmd, int fd){
     {
         std::string old;
         cli->setNickname(splitted_cmd[1]);
+        //std::cout << "nouveau nickname : " << cli->getNickname() << std::endl;
         //AJOUTER LE CHANGEMENT DE NICKNAME DANS TOUS LES CHANNELS
         if (!old.empty() && old != splitted_cmd[1])
         {

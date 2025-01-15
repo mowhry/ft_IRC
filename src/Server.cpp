@@ -197,6 +197,8 @@ void Server::exec(std::string &cmd, int fd){
         cmd_user(cmd, fd);
     else if(splitted_cmd.size() && (splitted_cmd[0] == "QUIT" || splitted_cmd[0] == "quit"))
         cmd_quit(cmd, fd);
+    else if(splitted_cmd.size() && (splitted_cmd[0] == "PING" || splitted_cmd[0] == "ping"))
+        SendResponse(fd, "PONG");
     else if (getClient(fd)->getRegister() == true)
     {
 
