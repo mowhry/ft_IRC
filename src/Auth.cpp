@@ -15,18 +15,18 @@ void Server::cmd_auth(std::string cmd, int fd){
             cmd.erase(cmd.begin());
     }
     if(pos == std::string::npos || cmd.empty()) 
-		SendResponse(fd, ERR_NOTENOUGHPARAM1(std::string("*")));
+		SendResponse(fd, ERR_NOTENOUGHPARAM(std::string("*")));
     if (!cli->getRegister())
     {
         if (cmd == getPassword()){
             cli->setRegister(true);
-            SendResponse(fd, "Connected\n");
         }
         else
-            SendResponse(fd, "Wrong Password\n");
+            SendResponse(fd, ERR_INCORRECTPASS(std::string("*")));
     }
     else
-        SendResponse(fd, "Already Registered\n");
+          return;
+          //SendResponse(fd, ERR_ALREADYREGISTERED(getClient(fd)->getNickname()));
 }
 
 bool Server::IsValidNick(std::string nickname, int fd){
@@ -58,7 +58,7 @@ void Server::cmd_nick(std::vector<std::string> splitted_cmd, int fd){
 
     Client *cli = getClient(fd);
     if (splitted_cmd.size() < 2 || splitted_cmd[1].empty()){
-        SendResponse(fd, ERR_NOTENOUGHPARAM());
+        SendResponse(fd, ERR_NOTENOUGHPARAM(std::string("*")));
         return;
     }
     if (!IsValidNick(splitted_cmd[1], fd))
@@ -98,7 +98,7 @@ void Server::cmd_user(std::string cmd, int fd){
 	Client *cli = getClient(fd); 
 	if((cli && splitted_cmd.size() < 5))
 	{   
-        SendResponse(fd, ERR_NOTENOUGHPARAM1(cli->getNickname())); 
+        SendResponse(fd, ERR_NOTENOUGHPARAM(cli->getNickname())); 
         return; 
     }
 	if(!cli  || !cli->getRegister())

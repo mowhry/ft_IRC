@@ -187,22 +187,22 @@ void Server::exec(std::string &cmd, int fd){
    size_t check = cmd.find_first_not_of(" \t\r");
     if (check != std::string::npos)
         cmd = cmd.substr(check);
-    if(splitted_cmd.size() && (splitted_cmd[0] == "PING" || splitted_cmd[0] == "ping"))
+    if(splitted_cmd.size() && (splitted_cmd[0] == "CAP" || splitted_cmd[0] == "cap"))
 		return;
     if(splitted_cmd.size() && (splitted_cmd[0] == "PASS" || splitted_cmd[0] == "pass"))
         cmd_auth(cmd, fd);
-    else if(splitted_cmd.size() && (splitted_cmd[0] == "USER" || splitted_cmd[0] == "userhost")){
-        cmd_user(cmd, fd);
-    }
     else if(splitted_cmd.size() && (splitted_cmd[0] == "NICK" || splitted_cmd[0] == "nick"))
         cmd_nick(splitted_cmd, fd);
+    else if(splitted_cmd.size() && (splitted_cmd[0] == "USER" || splitted_cmd[0] == "user"))
+        cmd_user(cmd, fd);
     else if(splitted_cmd.size() && (splitted_cmd[0] == "QUIT" || splitted_cmd[0] == "quit"))
         cmd_quit(cmd, fd);
     else if (getClient(fd)->getRegister() == true)
     {
 
-        SendResponse(fd, "you are registered");
+
         // FUNCTIONS THAT NEED YOU TO BE LOGGED IN
+        SendResponse(fd, ERR_CMDNOTFOUND(getClient(fd)->getNickname(),splitted_cmd[0]));
     }
     else if (getClient(fd)->getRegister() == false)
     {
