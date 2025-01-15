@@ -1,17 +1,18 @@
 #include "../include/Server.hpp"
 #include "../include/Client.hpp"
 
+int verif_args(int ac, char **av);
+
+
 bool Server::Signal = false;
 
 int main(int ac, char **av)
 {
-    if (ac != 3)
-    {
-        std::cout << "Usage : ./ircserv <port> <password>" << std::endl;
-        return (-1);
-    }
-Server ser("SERVER DE OUF", av[1], av[2]);
-std::cout <<" -----"<< ser.getName() <<"----- "<< std::endl;
+    if (verif_args(ac,av) == -1)
+		return (-1);
+
+	Server ser("SERVER DE OUF", av[1], av[2]);
+	std::cout <<" -----"<< ser.getName() <<"----- "<< std::endl;
 
     try{
         signal(SIGINT, Server::SignalHandler);
