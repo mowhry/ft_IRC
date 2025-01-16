@@ -65,6 +65,7 @@ void Server::cmd_nick(std::vector<std::string> splitted_cmd, int fd){
     if(cli && cli->getRegister())
     {
         std::string old;
+		old = cli->getNickname();
         cli->setNickname(splitted_cmd[1]);
         //std::cout << "nouveau nickname : " << cli->getNickname() << std::endl;
         //AJOUTER LE CHANGEMENT DE NICKNAME DANS TOUS LES CHANNELS
