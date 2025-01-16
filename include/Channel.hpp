@@ -1,6 +1,7 @@
 #pragma once
+
 #include "./Client.hpp"
-#include "./Server.hpp"
+#include <vector>
 
 class Channel{
 private:

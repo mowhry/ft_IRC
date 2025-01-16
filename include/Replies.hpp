@@ -10,4 +10,5 @@
 #define ERR_NOTENOUGHPARAM(nickname) (": 461 " + nickname + " :Not enough parameters\r\n")
 #define ERR_ALREADYREGISTERED(nickname) (": 462 " + nickname + " :You are already registered!\r\n")
 #define ERR_CMDNOTFOUND(nickname, command) (": 421 " + nickname + " " + command + " : Command not found\r\n")
-#define ERR_INCORRECTPASS(nickname) (": 464 " + nickname + " :Password incorrect !\r\f" )
+#define ERR_INCORRECTPASS(nickname) (": 464 " + nickname + " :Password incorrect !\r\n" )
+#define ERR_USERONCHANNEL(nickname, channel) ("443 " + nickname + " " + channel + " :is already on channel\r\n")

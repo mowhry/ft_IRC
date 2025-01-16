@@ -201,10 +201,11 @@ void Server::exec(std::string &cmd, int fd){
         SendResponse(fd, "PONG");
     else if (getClient(fd)->getLog() == true)
     {
-
-
         // FUNCTIONS THAT NEED YOU TO BE LOGGED IN
-        SendResponse(fd, ERR_CMDNOTFOUND(getClient(fd)->getNickname(),splitted_cmd[0]));
+        if (splitted_cmd.size() && (splitted_cmd[0] == "JOIN" || splitted_cmd[0] == "join"))
+            cmd_join(splitted_cmd, fd);
+        else
+            SendResponse(fd, ERR_CMDNOTFOUND(getClient(fd)->getNickname(),splitted_cmd[0]));
     }
     else if (getClient(fd)->getRegister() == false)
     {

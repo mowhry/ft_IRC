@@ -15,8 +15,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <sstream>
+#include <map>
 #include "./Client.hpp"
 #include "./Replies.hpp"
+#include "./Channel.hpp"
 
 #define RED "\e[1;31m" 
 #define WHI "\e[0;37m" 
@@ -33,6 +35,7 @@ class Server{
         static bool Signal;
         std::vector<Client> clients;
         std::vector<struct pollfd> fds;
+        std::map<std::string, Channel> channels;
     
     public : 
         Server();
@@ -57,6 +60,7 @@ class Server{
         void cmd_quit(std::string cmd, int fd);
         void cmd_user(std::string cmd, int fd);
         void cmd_nick(std::vector<std::string> splitted_cmd, int fd);
+        void cmd_join(std::vector<std::string> splitted_cmd, int fd);
 
 
         static void SignalHandler(int signum);

@@ -24,7 +24,7 @@ Channel& Channel::operator=(const Channel &other)
 	if (this != &other)
 	{
 		this->_name = other._name;
-		this->_users = other._users; // copie les pointeurs (shallow copy)
+		this->_users = other._users;
 	}
 	return *this;
 }
