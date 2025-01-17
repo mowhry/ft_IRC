@@ -54,3 +54,65 @@ void Server::cmd_join(std::vector<std::string> splitted_cmd, int fd)
 	SendResponse(fd, msg);
 
 }
+
+
+
+int Server::searchNicknameInClient(std::string nickname)
+{
+	for (size_t i = 0; i < clients.size(); i++)
+	{
+		if (clients[i].getNickname() == nickname)
+			return (1);
+	}
+	return (0);
+}
+
+
+void Server::cmd_privmsg(std::string command_full, int fd)
+{
+	Client *cli = getClient(fd);
+	std::string nick = cli->getNickname();
+
+	std::istringstream str(command_full);
+	std::string cmd, targetList, message;
+
+	str >> cmd >> targetList;
+
+	if(targetList.empty())
+	{
+		SendResponse(fd, ERR_NORECIPIENT(nick));
+		return;
+	}
+
+	std::getline(str, message);
+
+	if(message.empty())
+	{
+		SendResponse(fd, ERR_NOTEXTTOSEND(nick));
+		return;
+	}
+
+	if(message[0] == ':')
+	{
+		message = message.substr(1);
+	}
+
+	std::istringstream targetStream(targetList);
+	std::string target;
+	while (std::getline(targetStream, target,','))
+	{
+		if(searchNicknameInClient(target) == 1)
+		{
+			std::string messageToSend = ":" + nick + " PRIVMSG " + target + " :" + message + "\r\n";
+			SendResponse(fd,messageToSend);
+		}
+		///else if(if target exists in channel then broadcast 
+		///to everyone except the sender
+		///a implementer
+		else
+		{
+			SendResponse(fd, ERR_NOSUCHNICK(target));
+		}
+	}
+
+}

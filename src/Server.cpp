@@ -199,6 +199,8 @@ void Server::exec(std::string &cmd, int fd){
         cmd_quit(cmd, fd);
     else if(splitted_cmd.size() && (splitted_cmd[0] == "PING" || splitted_cmd[0] == "ping"))
         SendResponse(fd, "PONG");
+	else if(splitted_cmd.size() && (splitted_cmd[0] == "PRIVMSG" || splitted_cmd[0] == "privmsg"))
+		cmd_privmsg(cmd, fd);
     else if (getClient(fd)->getLog() == true)
     {
         // FUNCTIONS THAT NEED YOU TO BE LOGGED IN

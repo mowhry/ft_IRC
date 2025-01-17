@@ -45,4 +45,5 @@ class Client
         void setBuffer(std::string received);
         void setUser(std::string username);
         void setNickname(std::string nickname);
+
 };

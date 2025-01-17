@@ -12,3 +12,6 @@
 #define ERR_CMDNOTFOUND(nickname, command) (": 421 " + nickname + " " + command + " : Command not found\r\n")
 #define ERR_INCORRECTPASS(nickname) (": 464 " + nickname + " :Password incorrect !\r\n" )
 #define ERR_USERONCHANNEL(nickname, channel) ("443 " + nickname + " " + channel + " :is already on channel\r\n")
+#define ERR_NORECIPIENT(nickname) (": 411 " + nickname + " :No recipient given (PRIVMSG)\r\n")
+#define ERR_NOTEXTTOSEND(nickname) (": 412 " + nickname + " :No text to send\r\n")
+#define ERR_NOSUCHNICK(name) (": 401 " + name + " :No such nick/channel\r\n")
