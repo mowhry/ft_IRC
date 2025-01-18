@@ -61,7 +61,7 @@ class Server{
         void cmd_user(std::string cmd, int fd);
         void cmd_nick(std::vector<std::string> splitted_cmd, int fd);
         void cmd_join(std::vector<std::string> splitted_cmd, int fd);
-		void cmd_privmsg(std::string cmd, int fd);
+		void cmd_privmsg(std::string command_full, int fd);
 
         static void SignalHandler(int signum);
 
@@ -72,5 +72,5 @@ class Server{
         void CloseFds();
         void ClearClients(int fd);
 
-		int searchNicknameInClient(std::string nickname);
+		int getfdfromNickname(std::string nickname);
 };

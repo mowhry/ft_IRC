@@ -57,15 +57,16 @@ void Server::cmd_join(std::vector<std::string> splitted_cmd, int fd)
 
 
 
-int Server::searchNicknameInClient(std::string nickname)
+int Server::getfdfromNickname(std::string nickname)
 {
 	for (size_t i = 0; i < clients.size(); i++)
 	{
 		if (clients[i].getNickname() == nickname)
-			return (1);
+			return (clients[i].getFd());
 	}
-	return (0);
+	return (-1);
 }
+
 
 
 void Server::cmd_privmsg(std::string command_full, int fd)
@@ -101,10 +102,12 @@ void Server::cmd_privmsg(std::string command_full, int fd)
 	std::string target;
 	while (std::getline(targetStream, target,','))
 	{
-		if(searchNicknameInClient(target) == 1)
+		std::cout << "target:" << target <<":END"<<std::endl; // debug purpose
+
+		if(getfdfromNickname(target) != -1)
 		{
 			std::string messageToSend = ":" + nick + " PRIVMSG " + target + " :" + message + "\r\n";
-			SendResponse(fd,messageToSend);
+			SendResponse(getfdfromNickname(target),messageToSend);
 		}
 		///else if(if target exists in channel then broadcast 
 		///to everyone except the sender
