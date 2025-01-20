@@ -2,7 +2,7 @@
 
 
 #define RPL_CONNECTED(nickname) (": 001 " + nickname + " : Welcome to Serveur 2 Ouf\r\n")
-#define RPL_NICKCHANGE(oldnickname, nickname) (": " + oldnickname + " NICK " + nickname + "\r\n")
+#define RPL_NICKCHANGE(oldnickname, nickname) (":" + oldnickname + " NICK " + nickname + "\r\n")
 
 #define ERR_NOTREGISTERED(nickname) (": 451 " + nickname + " : You have not registered\r\n")
 #define ERR_INVALIDNICK(nickname)(": 432 " + nickname + " : Erroneus nickname\r\n")
