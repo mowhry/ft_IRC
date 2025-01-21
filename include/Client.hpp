@@ -22,7 +22,7 @@ class Client
         bool _isRegistered;
         bool _isLogged;
         bool _isAdmin;
-   
+
     public : 
         Client();
         Client(Client const &src);

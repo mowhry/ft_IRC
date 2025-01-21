@@ -79,7 +79,7 @@ void Server::cmd_privmsg(std::string command_full, int fd)
 
 	str >> cmd >> targetList;
 
-	if(targetList.empty())
+	if (targetList.empty())
 	{
 		SendResponse(fd, ERR_NORECIPIENT(nick));
 		return;
@@ -87,38 +87,54 @@ void Server::cmd_privmsg(std::string command_full, int fd)
 
 	std::getline(str, message);
 
-	if(message.empty())
+	if (message.empty())
 	{
 		SendResponse(fd, ERR_NOTEXTTOSEND(nick));
 		return;
 	}
 
-	if(message[0] == ':')
+	if (message[0] == ':')
 	{
 		message = message.substr(1);
 	}
 
 	std::istringstream targetStream(targetList);
 	std::string target;
-	while (std::getline(targetStream, target,','))
+	while (std::getline(targetStream, target, ','))
 	{
-		std::cout << "target:" << target <<":END"<<std::endl; // debug purpose
+		std::cout << "target:" << target << ":END" << std::endl; // debug purpose
 
-		if(getfdfromNickname(target) != -1)
+		if (target[0] == '#')
+		{
+			Channel *channel = getChan(target);
+			if (!channel)
+			{
+				SendResponse(fd, ERR_NOSUCHCHANNEL(target));
+				continue;
+			}
+
+			const std::vector<Client *> &members = channel->getUser();
+			for (size_t i = 0; i < members.size(); ++i)
+			{
+				if (members[i]->getFd() != fd)
+				{
+					std::string messageToSend = ":" + nick + " PRIVMSG " + target + " :" + message + "\r\n";
+					SendResponse(members[i]->getFd(), messageToSend);
+				}
+			}
+		}
+		else if (getfdfromNickname(target) != -1)
 		{
 			std::string messageToSend = ":" + nick + " PRIVMSG " + target + " :" + message + "\r\n";
-			SendResponse(getfdfromNickname(target),messageToSend);
+			SendResponse(getfdfromNickname(target), messageToSend);
 		}
-		///else if(if target exists in channel then broadcast 
-		///to everyone except the sender
-		///a implementer
 		else
 		{
 			SendResponse(fd, ERR_NOSUCHNICK(target));
 		}
 	}
-
 }
+
 
 //##### MODE #####
 

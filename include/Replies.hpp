@@ -14,4 +14,5 @@
 #define ERR_USERONCHANNEL(nickname, channel) ("443 " + nickname + " " + channel + " :is already on channel\r\n")
 #define ERR_NORECIPIENT(nickname) (": 411 " + nickname + " :No recipient given (PRIVMSG)\r\n")
 #define ERR_NOTEXTTOSEND(nickname) (": 412 " + nickname + " :No text to send\r\n")
-#define ERR_NOSUCHNICK(name) (": 401 " + name + " :No such nick/channel\r\n")
+#define ERR_NOSUCHNICK(name) (": 401 " + name + " :No such nick\r\n")
+#define ERR_NOSUCHCHANNEL(name) (": 403 " + name + " :No such channel\r\n")
