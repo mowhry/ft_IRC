@@ -5,8 +5,15 @@
 
 class Channel{
 private:
-	std::string			_name;
+	std::string				_name;
 	std::vector<Client *>	_users;
+
+
+	int						_userLimit;
+	std::string				_password;
+	std::vector<Client> 	_operators;
+	bool					_isInviteOnly;
+
 
 public:
 	Channel();
@@ -17,7 +24,17 @@ public:
 	Channel& operator=(const Channel &os);
 
 	std::string	getName() const;
+	int getUserLimit();
+	std::string getPassword();
+	bool getInviteOnly();
+	
+
+
+
 	void		setName(const std::string &name);
+	void		setUserLimit(int limit);
+	void		setPassword (std::string pass);
+	void		setInviteOnly(bool invite);
 
 	void		addUser(Client *user);
 	void		removeUser(Client *user);

@@ -119,3 +119,55 @@ void Server::cmd_privmsg(std::string command_full, int fd)
 	}
 
 }
+
+//##### MODE #####
+
+bool Server::checkExist_name(std::string name){
+	for (size_t i = 0; i < clients.size(); i++){
+		if (clients[i].getNickname() == name)
+			return (true);
+	}
+	return (false);
+}
+
+bool Server::checkExist_chan(std::string name){
+	std::map<std::string, Channel>::iterator it = channels.find(name);
+	if(it != channels.end() )
+			return (true);
+	return (false);
+}
+
+void Server::cmd_mode(std::vector<std::string> splitted_cmd, int fd)
+{
+	if (splitted_cmd.size() < 3)
+		return;
+	if (splitted_cmd[1][0] == '#')
+	{
+		if(checkExist_chan(splitted_cmd[1]))
+			chan_mode(splitted_cmd, fd);
+		else
+		{
+			SendResponse(fd, "Channel does not exist\n");
+			return;
+		}
+	}
+	else
+	{
+		if(checkExist_name(splitted_cmd[1])){
+			SendResponse(fd, "Client modes are not mandatory\n");
+			return;
+		}
+		else
+		{
+			SendResponse(fd, "Client does not exist\n");
+			return;
+		}	
+	}	
+
+
+}
+
+void	Server::chan_mode(std::vector<std::string> splitted_cmd, int fd){
+	(void) splitted_cmd;
+	(void) fd;
+}

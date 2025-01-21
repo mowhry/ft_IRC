@@ -21,6 +21,7 @@ class Client
 
         bool _isRegistered;
         bool _isLogged;
+        bool _isAdmin;
    
     public : 
         Client();
@@ -37,6 +38,7 @@ class Client
         bool getLog();
         std::string getNickname();
         std::string getUser();
+
 
         void setFd(int fd);
         void setRegister(bool Registered);

@@ -62,15 +62,19 @@ class Server{
         void cmd_nick(std::vector<std::string> splitted_cmd, int fd);
         void cmd_join(std::vector<std::string> splitted_cmd, int fd);
 		void cmd_privmsg(std::string command_full, int fd);
+        void cmd_mode(std::vector<std::string> splitted_cmd, int fd);
 
         static void SignalHandler(int signum);
 
         std::string getName();
+        bool checkExist_name(std::string name);
+        bool checkExist_chan(std::string name);
         Client  *getClient(int fd);
         std::string getPassword();
         
         void CloseFds();
         void ClearClients(int fd);
 
-		int getfdfromNickname(std::string nickname);
+		int     getfdfromNickname(std::string nickname);
+        void	chan_mode(std::vector<std::string> splitted_cmd, int fd);
 };

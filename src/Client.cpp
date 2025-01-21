@@ -2,7 +2,7 @@
 
 //####### CONSTRUCTORS & DESTRUCTOR
 
-Client::Client() : IPadd(""), _nickname(""), _username(""), _buffer(""), _isRegistered(false), _isLogged(false){
+Client::Client() : IPadd(""), _nickname(""), _username(""), _buffer(""), _isRegistered(false), _isLogged(false) {
 
 }
 
@@ -66,6 +66,7 @@ void Client::setRegister(bool Registered){
 void Client::setLog(bool Logged){
     this->_isLogged = Logged;
 }
+
 
 void Client::setIpAdd(std::string ipadd){
     this->IPadd = ipadd;

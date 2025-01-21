@@ -1,11 +1,11 @@
 #include "../include/Channel.hpp"
 #include "algorithm"
 
-Channel::Channel() : _name(""), _users()
+Channel::Channel() : _name(""), _users(),  _userLimit(-1), _password(""), _operators(), _isInviteOnly(false)
 {
 }
 
-Channel::Channel(const std::string &name) : _name(name), _users()
+Channel::Channel(const std::string &name) : _name(name), _users(), _userLimit(-1), _password(""), _operators(), _isInviteOnly(false)
 {
 }
 
@@ -29,16 +29,46 @@ Channel& Channel::operator=(const Channel &other)
 	return *this;
 }
 
+//#### GETTERS 
 std::string Channel::getName() const
 {
 	return this->_name;
 }
+
+
+int	Channel::getUserLimit(){
+	return this->_userLimit;
+}
+
+std::string Channel::getPassword(){
+	return this->_password;
+}
+
+bool Channel::getInviteOnly(){
+	return this->_isInviteOnly;
+}
+
+
+//#### SETTERS
 
 void Channel::setName(const std::string &name)
 {
 	this->_name = name;
 }
 
+void		Channel::setUserLimit(int limit){
+	this->_userLimit = limit;
+}
+
+void		Channel::setPassword (std::string pass){
+	this->_password = pass;
+}
+
+void		Channel::setInviteOnly(bool invite){
+	this->_isInviteOnly = invite;
+}
+
+//#### FUNCTIONS
 
 void Channel::addUser(Client *user)
 {
