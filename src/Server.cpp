@@ -66,6 +66,10 @@ Client * Server::getClientFromNickname(std::string nickname){
     return NULL ;
 }
 
+std::string  Server::getNicknameFromFd(int fd){
+    return(getClient(fd)->getNickname());
+}
+
 
 //####### FUNCTIONS
 

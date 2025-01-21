@@ -172,16 +172,18 @@ void	Server::chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *c
 		SendResponse (fd, "Error on format\n");
 		return;
 	}
-	if ((splitted_cmd[2][0] != '+' ||  splitted_cmd[2][0] != '-') && (splitted_cmd[2].size() == 2))
+	if (chan->isOperator(getNicknameFromFd(fd)))
 	{
-		if (splitted_cmd[2][1] == 'o'){
-			if(splitted_cmd[2][0]== '+')
-				SendResponse(fd, chan->addOperator(*getClientFromNickname(splitted_cmd[3])));
-			else
-				SendResponse(fd, chan->removeOperator(*getClientFromNickname(splitted_cmd[3])));
+		if ((splitted_cmd[2][0] != '+' ||  splitted_cmd[2][0] != '-') && (splitted_cmd[2].size() == 2))
+		{
+			if (splitted_cmd[2][1] == 'o'){
+				if(splitted_cmd[2][0]== '+')
+					SendResponse(fd, chan->addOperator(*getClientFromNickname(splitted_cmd[3])));
+				else
+					SendResponse(fd, chan->removeOperator(*getClientFromNickname(splitted_cmd[3])));
+			}
 		}
-
-		
 	}
-	SendResponse(fd, "Error on the MODE command\n");
+	else
+		SendResponse(fd, "Error on the MODE command\n");
 }

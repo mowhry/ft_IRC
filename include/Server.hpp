@@ -78,5 +78,6 @@ class Server{
         void ClearClients(int fd);
 
 		int     getfdfromNickname(std::string nickname);
+        std::string  getNicknameFromFd(int fd);
         void	chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *chan);
 };
