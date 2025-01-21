@@ -97,3 +97,37 @@ const std::vector<Client *>& Channel::getUser() const
 	return this->_users;
 }
 
+
+bool	Channel::isOperator(std::string nick){
+	for (size_t i = 0; i < _operators.size(); i++)
+	{
+		if (_operators[i].getNickname() == nick)
+		 return true;
+	}
+	return false;
+}
+
+int 	Channel::addOperator(Client user){
+	if (isOperator(user.getNickname())){
+		return(-1);
+	}
+	for(size_t i = 0; i < _users.size(); i++)
+	{
+		if (_users[i]->getFd() == user.getFd()){
+			_operators.push_back(user);
+			return(0);
+		}
+	}
+	return(-1);
+}
+
+int Channel::removeOperator(Client user){
+	for (size_t i = 0; i < _operators.size(); i++){
+		if (_operators[i].getFd() == user.getFd())
+		{
+			_operators.erase(_operators.begin() + i);
+			return (0);
+		}
+	}
+	return(-1);
+}

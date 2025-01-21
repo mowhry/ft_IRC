@@ -154,7 +154,7 @@ void Server::cmd_mode(std::vector<std::string> splitted_cmd, int fd)
 	else
 	{
 		if(checkExist_name(splitted_cmd[1])){
-			SendResponse(fd, "Client modes are not mandatory\n");
+			SendResponse(fd, "User modes are not mandatory\n");
 			return;
 		}
 		else

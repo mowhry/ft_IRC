@@ -24,9 +24,10 @@ public:
 	Channel& operator=(const Channel &os);
 
 	std::string	getName() const;
-	int getUserLimit();
+	int 		getUserLimit();
 	std::string getPassword();
-	bool getInviteOnly();
+	bool		getInviteOnly();
+	const std::vector<Client *>& getUser() const;
 	
 
 
@@ -37,7 +38,10 @@ public:
 	void		setInviteOnly(bool invite);
 
 	void		addUser(Client *user);
+	int			addOperator(Client user);
 	void		removeUser(Client *user);
-	const std::vector<Client *>& getUser() const;
+	int			removeOperator(Client user);
+	bool		isOperator(std::string nick);
+	
 
 };
