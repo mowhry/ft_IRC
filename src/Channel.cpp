@@ -107,27 +107,27 @@ bool	Channel::isOperator(std::string nick){
 	return false;
 }
 
-int 	Channel::addOperator(Client user){
+std::string	Channel::addOperator(Client user){
 	if (isOperator(user.getNickname())){
-		return(-1);
+		return("User is Already Operator");
 	}
 	for(size_t i = 0; i < _users.size(); i++)
 	{
 		if (_users[i]->getFd() == user.getFd()){
 			_operators.push_back(user);
-			return(0);
+			return("User added as Operator");
 		}
 	}
-	return(-1);
+	return("User not in the Channel");
 }
 
-int Channel::removeOperator(Client user){
+std::string Channel::removeOperator(Client user){
 	for (size_t i = 0; i < _operators.size(); i++){
 		if (_operators[i].getFd() == user.getFd())
 		{
 			_operators.erase(_operators.begin() + i);
-			return (0);
+			return ("User Not Operator anymore");
 		}
 	}
-	return(-1);
+	return("User was not Operator");
 }

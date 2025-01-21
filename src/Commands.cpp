@@ -143,8 +143,8 @@ void Server::cmd_mode(std::vector<std::string> splitted_cmd, int fd)
 		return;
 	if (splitted_cmd[1][0] == '#')
 	{
-		if(checkExist_chan(splitted_cmd[1]))
-			chan_mode(splitted_cmd, fd);
+		if(checkExist_chan(splitted_cmd[1]) && splitted_cmd.size() == 4 )
+			chan_mode(splitted_cmd, fd, getChan(splitted_cmd[1]));
 		else
 		{
 			SendResponse(fd, "Channel does not exist\n");
@@ -167,7 +167,21 @@ void Server::cmd_mode(std::vector<std::string> splitted_cmd, int fd)
 
 }
 
-void	Server::chan_mode(std::vector<std::string> splitted_cmd, int fd){
-	(void) splitted_cmd;
-	(void) fd;
+void	Server::chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *chan){
+	if (splitted_cmd[2].size() != 2){
+		SendResponse (fd, "Error on format\n");
+		return;
+	}
+	if ((splitted_cmd[2][0] != '+' ||  splitted_cmd[2][0] != '-') && (splitted_cmd[2].size() == 2))
+	{
+		if (splitted_cmd[2][1] == 'o'){
+			if(splitted_cmd[2][0]== '+')
+				SendResponse(fd, chan->addOperator(*getClientFromNickname(splitted_cmd[3])));
+			else
+				SendResponse(fd, chan->removeOperator(*getClientFromNickname(splitted_cmd[3])));
+		}
+
+		
+	}
+	SendResponse(fd, "Error on the MODE command\n");
 }

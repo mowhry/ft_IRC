@@ -49,6 +49,24 @@ std::string Server::getPassword(){
     return this->_password;
 }
 
+Channel  * Server::getChan(std::string name)
+{
+    std::map<std::string, Channel>::iterator it = channels.find(name);
+    if (it != channels.end())
+        return &(it->second);
+    return NULL;
+}
+
+Client * Server::getClientFromNickname(std::string nickname){
+    for (size_t i = 0; i < clients.size(); i++)
+    {
+        if (clients[i].getNickname() == nickname)
+            return &clients[i];
+    }
+    return NULL ;
+}
+
+
 //####### FUNCTIONS
 
 void Server::SerInit(){
@@ -206,6 +224,8 @@ void Server::exec(std::string &cmd, int fd){
             cmd_join(splitted_cmd, fd);
         else if(splitted_cmd.size() && (splitted_cmd[0] == "PRIVMSG" || splitted_cmd[0] == "privmsg"))
             cmd_privmsg(cmd, fd);
+        else if(splitted_cmd.size() && (splitted_cmd[0] == "MODE" || splitted_cmd[0] == "mode"))
+            cmd_mode(splitted_cmd, fd);
         else
             SendResponse(fd, ERR_CMDNOTFOUND(getClient(fd)->getNickname(),splitted_cmd[0]));
     }

@@ -82,4 +82,5 @@ void Client::setUser(std::string username){
 
 void Client::setNickname(std::string nickname){
     this->_nickname = nickname;
+    
 }

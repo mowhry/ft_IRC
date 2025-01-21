@@ -38,9 +38,9 @@ public:
 	void		setInviteOnly(bool invite);
 
 	void		addUser(Client *user);
-	int			addOperator(Client user);
+	std::string	addOperator(Client user);
 	void		removeUser(Client *user);
-	int			removeOperator(Client user);
+	std::string	removeOperator(Client user);
 	bool		isOperator(std::string nick);
 	
 

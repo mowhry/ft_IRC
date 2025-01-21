@@ -70,11 +70,13 @@ class Server{
         bool checkExist_name(std::string name);
         bool checkExist_chan(std::string name);
         Client  *getClient(int fd);
+        Client *getClientFromNickname(std::string nickname);
+        Channel *getChan(std::string name);
         std::string getPassword();
         
         void CloseFds();
         void ClearClients(int fd);
 
 		int     getfdfromNickname(std::string nickname);
-        void	chan_mode(std::vector<std::string> splitted_cmd, int fd);
+        void	chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *chan);
 };
