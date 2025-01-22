@@ -38,7 +38,7 @@ class Client
         bool getLog();
         std::string getNickname();
         std::string getUser();
-
+        std::string getHostname();
 
         void setFd(int fd);
         void setRegister(bool Registered);

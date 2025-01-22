@@ -54,6 +54,11 @@ bool    Client::getLog(){
     return (this->_isLogged);
 }
 
+std::string Client::getHostname(){
+	std::string hostname = this->getNickname() + "!" + this->getUser();
+	return hostname;
+}
+
 void Client::setFd(int fd){
     this->fd = fd;
 }

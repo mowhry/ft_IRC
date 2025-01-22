@@ -5,7 +5,7 @@ Channel::Channel() : _name(""), _users(),  _userLimit(-1), _password(""), _opera
 {
 }
 
-Channel::Channel(const std::string &name) : _name(name), _users(), _userLimit(-1), _password(""), _operators(), _isInviteOnly(false)
+Channel::Channel(const std::string &name) : _name(name), _users(), _userLimit(0), _password(""), _operators(), _isInviteOnly(false)
 {
 }
 
@@ -115,7 +115,7 @@ std::string	Channel::addOperator(Client user){
 	{
 		if (_users[i]->getFd() == user.getFd()){
 			_operators.push_back(user);
-			return("User added as Operator");
+			return(RPL_CHANGEMODE(user.getHostname(), this->_name, "+o", user.getNickname()));
 		}
 	}
 	return("User not in the Channel");

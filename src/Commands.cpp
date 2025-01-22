@@ -147,6 +147,7 @@ bool Server::checkExist_name(std::string name){
 }
 
 bool Server::checkExist_chan(std::string name){
+
 	std::map<std::string, Channel>::iterator it = channels.find(name);
 	if(it != channels.end() )
 			return (true);
@@ -159,32 +160,21 @@ void Server::cmd_mode(std::vector<std::string> splitted_cmd, int fd)
 		return;
 	if (splitted_cmd[1][0] == '#')
 	{
-		if(checkExist_chan(splitted_cmd[1]) && splitted_cmd.size() == 4 )
+		if(checkExist_chan(splitted_cmd[1]) && (splitted_cmd.size() == 4 || splitted_cmd.size() == 3) )
 			chan_mode(splitted_cmd, fd, getChan(splitted_cmd[1]));
+		else if (splitted_cmd.size() <= 4)
+			SendResponse(fd, ERR_NOTENOUGHPARAM(getNicknameFromFd(fd)));	
 		else
-		{
-			SendResponse(fd, "Channel does not exist\n");
-			return;
-		}
+			SendResponse(fd, ERR_NOSUCHCHANNEL(splitted_cmd[1]));
 	}
-	else
-	{
-		if(checkExist_name(splitted_cmd[1])){
-			SendResponse(fd, "User modes are not mandatory\n");
-			return;
-		}
-		else
-		{
-			SendResponse(fd, "Client does not exist\n");
-			return;
-		}	
-	}	
+		return;
 
 
 }
 
 void	Server::chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *chan){
 	if (splitted_cmd[2].size() != 2){
+
 		SendResponse (fd, "Error on format\n");
 		return;
 	}
@@ -192,14 +182,65 @@ void	Server::chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *c
 	{
 		if ((splitted_cmd[2][0] != '+' ||  splitted_cmd[2][0] != '-') && (splitted_cmd[2].size() == 2))
 		{
+
 			if (splitted_cmd[2][1] == 'o'){
 				if(splitted_cmd[2][0]== '+')
 					SendResponse(fd, chan->addOperator(*getClientFromNickname(splitted_cmd[3])));
 				else
 					SendResponse(fd, chan->removeOperator(*getClientFromNickname(splitted_cmd[3])));
 			}
+			if (splitted_cmd[2][1] == 'i')
+				invite_mode(splitted_cmd[2][0], chan, fd);
+			if (splitted_cmd[2][0]== 'l' && splitted_cmd.size() > 3)
+				limit_mode(splitted_cmd[2][0], chan, fd, splitted_cmd[3]);
+			else if (splitted_cmd[2][0]== 'l')
+				SendResponse(fd, ERR_NEEDMODEPARAM(chan->getName(),"l"));
+
 		}
 	}
 	else
-		SendResponse(fd, "Error on the MODE command\n");
+		SendResponse(fd, ERR_NOTOPERATOR(chan->getName()));
 }
+
+
+void	Server::invite_mode(char c, Channel *chan, int fd)
+{
+	if (c =='+')
+	{
+		chan->setInviteOnly(true);
+		SendResponse(fd, RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "+i", ""));	//sendtoall
+	}
+
+	if (c =='-')
+	{
+		chan->setInviteOnly(false);
+		SendResponse(fd, RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "-i", ""));	//sendtoall
+	}
+}
+
+
+bool Server::isvalid_limit(std::string& limit)
+{
+	return (!(limit.find_first_not_of("0123456789")!= std::string::npos) && std::atoi(limit.c_str()) > 0);
+}
+
+void	Server::limit_mode(char c, Channel *chan, int fd, std::string limit)
+{
+	if (c == '+')
+	{
+		if (!isvalid_limit(limit))
+			SendResponse(fd, ERR_INVALIDMODEPARAM(chan->getName(),"l"));
+		else 
+		{
+			chan->setUserLimit(std::atoi(limit.c_str()));
+			SendResponse(fd, RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "+l", limit));	//sendtoall
+		}
+	}
+	else
+	{
+		chan->setUserLimit(0);
+		SendResponse(fd, RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "+l", "0"));	//sendtoall
+	}
+}
+
+
