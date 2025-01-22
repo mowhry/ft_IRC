@@ -14,7 +14,7 @@ void Server::cmd_quit(std::string cmd, int fd){
         close(fd);
 }
 
-// ##### JOIN (TEMPPORARY) #####
+// ##### JOIN #####
 void Server::cmd_join(std::vector<std::string> splitted_cmd, int fd)
 {
 	Client *cli = getClient(fd);
@@ -34,12 +34,12 @@ void Server::cmd_join(std::vector<std::string> splitted_cmd, int fd)
 		return;
 	}
 
-	if 	(channels.find(chan_name) == channels.end())
+	if (channels.find(chan_name) == channels.end())
 		channels.insert(std::make_pair(chan_name, Channel(chan_name)));
 
 	Channel &channel = channels[chan_name];
-
 	const std::vector<Client*> &members = channel.getUser();
+
 	for (size_t i = 0; i < members.size(); ++i)
 	{
 		if (members[i] == cli)
@@ -49,11 +49,15 @@ void Server::cmd_join(std::vector<std::string> splitted_cmd, int fd)
 		}
 	}
 
-	channels[chan_name].addUser(cli);
+	channel.addUser(cli);
+	if (channel.getUser().size() == 1) 
+	{
+		channel.addOperator(*cli); 
+	}
 	std::string msg = ":" + cli->getNickname() + " JOIN " + chan_name + "\r\n";
 	SendResponse(fd, msg);
-
 }
+
 
 
 
