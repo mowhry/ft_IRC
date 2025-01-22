@@ -56,6 +56,7 @@ void Server::cmd_join(std::vector<std::string> splitted_cmd, int fd)
 	}
 	std::string msg = ":" + cli->getNickname() + " JOIN " + chan_name + "\r\n";
 	SendResponse(fd, msg);
+	channel.sendToAll(msg, fd, *this);
 }
 
 
@@ -116,16 +117,9 @@ void Server::cmd_privmsg(std::string command_full, int fd)
 				SendResponse(fd, ERR_NOSUCHCHANNEL(target));
 				continue;
 			}
+			std::string messageToSend = ":" + nick + " PRIVMSG " + target + " :" + message + "\r\n";
 
-			const std::vector<Client *> &members = channel->getUser();
-			for (size_t i = 0; i < members.size(); ++i)
-			{
-				if (members[i]->getFd() != fd)
-				{
-					std::string messageToSend = ":" + nick + " PRIVMSG " + target + " :" + message + "\r\n";
-					SendResponse(members[i]->getFd(), messageToSend);
-				}
-			}
+			channel->sendToAll(messageToSend, fd, *this);
 		}
 		else if (getfdfromNickname(target) != -1)
 		{

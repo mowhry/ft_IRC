@@ -1,4 +1,5 @@
 #include "../include/Channel.hpp"
+#include "../include/Server.hpp"
 #include "algorithm"
 
 Channel::Channel() : _name(""), _users(),  _userLimit(-1), _password(""), _operators(), _isInviteOnly(false)
@@ -130,4 +131,15 @@ std::string Channel::removeOperator(Client user){
 		}
 	}
 	return("User was not Operator");
+}
+
+void Channel::sendToAll(const std::string &msg, int senderFd, Server &server)
+{
+	for (size_t i = 0; i < _users.size(); i++)
+	{
+		if (_users[i]->getFd() != senderFd)
+		{
+			server.SendResponse(_users[i]->getFd(), msg);
+		}
+	}
 }

@@ -43,6 +43,7 @@ public:
 	void		removeUser(Client *user);
 	std::string	removeOperator(Client user);
 	bool		isOperator(std::string nick);
-	
+
+	void sendToAll(const std::string &msg, int senderFd, Server &server);
 
 };
