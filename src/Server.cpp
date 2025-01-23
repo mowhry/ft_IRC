@@ -201,10 +201,10 @@ void Server::exec(std::string &cmd, int fd){
     splitted_cmd = split(cmd);
 
     //UNCOMMENT TO SEE WHAT YOU RECEIVE FROM THE CLIENT
-   for(size_t i = 0; i < splitted_cmd.size(); i++)
+   /*for(size_t i = 0; i < splitted_cmd.size(); i++)
     {
         std::cout << fd << ": " << i << ": " << splitted_cmd[i] << std::endl;
-    }
+    }*/
    /////////////
    size_t check = cmd.find_first_not_of(" \t\r");
     if (check != std::string::npos)

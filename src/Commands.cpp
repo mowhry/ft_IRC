@@ -187,12 +187,18 @@ void	Server::chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *c
 				else
 					SendResponse(fd, chan->removeOperator(*getClientFromNickname(splitted_cmd[3])));
 			}
-			if (splitted_cmd[2][1] == 'i')
+			else if (splitted_cmd[2][1] == 'i')
 				invite_mode(splitted_cmd[2][0], chan, fd);
-			if (splitted_cmd[2][0]== 'l' && splitted_cmd.size() > 3)
-				limit_mode(splitted_cmd[2][0], chan, fd, splitted_cmd[3]);
-			else if (splitted_cmd[2][0]== 'l')
-				SendResponse(fd, ERR_NEEDMODEPARAM(chan->getName(),"l"));
+			else if (splitted_cmd[2][1]== 'l')
+			{
+				if(splitted_cmd.size() > 3)
+					limit_mode(splitted_cmd[2][0], chan, fd, splitted_cmd[3]);
+				else
+					SendResponse(fd, ERR_NEEDMODEPARAM(chan->getName(),"l"));
+			}
+			else if (splitted_cmd[2][1] == 't')
+				topic_mode(splitted_cmd[2][0], chan, fd);
+
 
 		}
 	}
@@ -209,13 +215,27 @@ void	Server::invite_mode(char c, Channel *chan, int fd)
 		SendResponse(fd, RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "+i", ""));	//sendtoall
 	}
 
-	if (c =='-')
+	else if (c =='-')
 	{
 		chan->setInviteOnly(false);
 		SendResponse(fd, RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "-i", ""));	//sendtoall
 	}
 }
 
+void Server::topic_mode(char c, Channel *chan, int fd)
+{
+	if (c =='+')
+	{
+		chan->setTopicRestricted(true);
+		SendResponse(fd, RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "+t", ""));	//sendtoall
+	}
+
+	else if (c =='-')
+	{
+		chan->setTopicRestricted(false);
+		SendResponse(fd, RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "-t", ""));	//sendtoall
+	}
+}
 
 bool Server::isvalid_limit(std::string& limit)
 {

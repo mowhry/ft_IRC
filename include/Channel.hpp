@@ -16,6 +16,7 @@ private:
 	std::string				_password;
 	std::vector<Client> 	_operators;
 	bool					_isInviteOnly;
+	bool					_isTopicRestricted;
 
 
 public:
@@ -30,6 +31,7 @@ public:
 	int 		getUserLimit();
 	std::string getPassword();
 	bool		getInviteOnly();
+	bool 		getTopicRestricted();
 	const std::vector<Client *>& getUser() const;
 	
 
@@ -39,6 +41,7 @@ public:
 	void		setUserLimit(int limit);
 	void		setPassword (std::string pass);
 	void		setInviteOnly(bool invite);
+	void		setTopicRestricted(bool restriction);
 
 	void		addUser(Client *user);
 	std::string	addOperator(Client user);

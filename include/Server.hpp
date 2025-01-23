@@ -83,5 +83,6 @@ class Server{
         void	chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *chan);
         void	invite_mode(char c, Channel *chan, int fd);
         void	limit_mode(char c, Channel *chan, int fd, std::string limit);
+        void	topic_mode(char c, Channel *chan, int fd);
         bool    isvalid_limit(std::string& limit);
 };

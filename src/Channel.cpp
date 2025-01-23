@@ -2,11 +2,11 @@
 #include "../include/Server.hpp"
 #include "algorithm"
 
-Channel::Channel() : _name(""), _users(),  _userLimit(-1), _password(""), _operators(), _isInviteOnly(false)
+Channel::Channel() : _name(""), _users(),  _userLimit(-1), _password(""), _operators(), _isInviteOnly(false), _isTopicRestricted(false)
 {
 }
 
-Channel::Channel(const std::string &name) : _name(name), _users(), _userLimit(0), _password(""), _operators(), _isInviteOnly(false)
+Channel::Channel(const std::string &name) : _name(name), _users(), _userLimit(0), _password(""), _operators(), _isInviteOnly(false), _isTopicRestricted(false)
 {
 }
 
@@ -49,6 +49,10 @@ bool Channel::getInviteOnly(){
 	return this->_isInviteOnly;
 }
 
+bool 		Channel::getTopicRestricted(){
+	return this->_isTopicRestricted;
+}
+
 
 //#### SETTERS
 
@@ -67,6 +71,10 @@ void		Channel::setPassword (std::string pass){
 
 void		Channel::setInviteOnly(bool invite){
 	this->_isInviteOnly = invite;
+}
+
+void		Channel::setTopicRestricted(bool restriction){
+	this->_isTopicRestricted = restriction;
 }
 
 //#### FUNCTIONS
