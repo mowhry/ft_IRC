@@ -24,6 +24,7 @@
 #define WHI "\e[0;37m" 
 #define GRE "\e[1;32m" 
 #define YEL "\e[1;33m"
+class Channel;
 
 class Server{
 

@@ -2,7 +2,9 @@
 
 #include "./Client.hpp"
 #include "./Replies.hpp"
+#include "./Server.hpp"
 #include <vector>
+class Server;
 
 class Channel{
 private:
