@@ -21,3 +21,4 @@
 #define ERR_UNKNOWNMODE(nickname, channelname, mode) (": 472 " + nickname + " #" + channelname + " " + mode + " :is not a recognised channel mode" + "\r\n")
 #define ERR_INVALIDMODEPARAM(channelname, mode) (": 696 " + channelname + " Invalid mode parameter. " + mode + "\r\n")
 #define ERR_NEEDMODEPARAM(channelname, mode) (": 696 #" + channelname + " * You must specify a parameter for the key mode. " + mode + "\r\n")
+#define ERR_KEYSET(channelname) (": 467 #" + channelname + " Channel key already set. " + "\r\n")

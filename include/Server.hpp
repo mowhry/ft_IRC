@@ -84,5 +84,6 @@ class Server{
         void	invite_mode(char c, Channel *chan, int fd);
         void	limit_mode(char c, Channel *chan, int fd, std::string limit);
         void	topic_mode(char c, Channel *chan, int fd);
+        void	password_mode(char c, Channel *chan, int fd, std::string pass);
         bool    isvalid_limit(std::string& limit);
 };

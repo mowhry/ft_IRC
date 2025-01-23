@@ -198,6 +198,14 @@ void	Server::chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *c
 			}
 			else if (splitted_cmd[2][1] == 't')
 				topic_mode(splitted_cmd[2][0], chan, fd);
+			else if (splitted_cmd[2][1] == 'k')
+			{
+				if(splitted_cmd.size() > 3)
+					password_mode(splitted_cmd[2][0], chan, fd, splitted_cmd[3]);
+				else
+					SendResponse(fd, ERR_NEEDMODEPARAM(chan->getName(),"k"));
+
+			}
 
 
 		}
@@ -261,4 +269,38 @@ void	Server::limit_mode(char c, Channel *chan, int fd, std::string limit)
 	}
 }
 
+bool isvalidPassword(std::string password)
+{
+	if(password.empty())
+		return false;
+	for(size_t i = 0; i < password.size(); i++)
+	{
+		if(!std::isalnum(password[i]) && password[i] != '_')
+			return false;
+	}
+	return true;
+}
+
+
+void	Server::password_mode(char c, Channel *chan, int fd, std::string pass){
+	if (!isvalidPassword(pass))
+		SendResponse(fd, ERR_INVALIDMODEPARAM(chan->getName(),"k"));
+	if (c == '+')
+	{
+		chan->setPassword(pass);
+		SendResponse(fd,RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "+k", pass)); //sendtoall
+	}
+	else if (c == '-' && !chan->getPassword().empty())
+	{
+		if(pass == chan->getPassword())
+		{
+			chan->setPassword("");
+			SendResponse(fd,RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "+k", "")); //sendtoall
+			}
+		}
+		else
+			SendResponse(fd, ERR_KEYSET(chan->getName()));
+	}
+
+}
 
