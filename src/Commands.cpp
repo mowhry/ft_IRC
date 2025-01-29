@@ -300,7 +300,7 @@ void	Server::password_mode(char c, Channel *chan, int fd, std::string pass){
 		}
 		else
 			SendResponse(fd, ERR_KEYSET(chan->getName()));
-	}
 
 }
+
 
