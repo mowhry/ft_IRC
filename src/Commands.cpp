@@ -57,6 +57,14 @@ void Server::cmd_join(std::vector<std::string> splitted_cmd, int fd)
 	std::string msg = ":" + cli->getNickname() + " JOIN " + chan_name + "\r\n";
 	SendResponse(fd, msg);
 	channel.sendToAll(msg, fd, *this);
+
+	//////
+	std::cout << "Channel :" << channel.getName() << ": User List :" << std::endl;
+	for (size_t i = 0; i < channel.getUser().size() ; i++)
+	{
+		std::cout << channel.getUser()[i]->getNickname() << std::endl;
+	}
+	/////
 }
 
 

@@ -260,7 +260,7 @@ std::vector<std::string>   Server::ParseData(std::string buff){
 
 void Server::SendResponse(int fd, std::string str){
  if(send(fd, str.c_str(), str.size(), 0) == -1)
-  std::cerr << "reply send() failed" << std::endl;
+  std::cerr << "reply send() failed : " << str << std::endl;
     
 }
 
