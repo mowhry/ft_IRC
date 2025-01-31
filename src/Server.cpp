@@ -144,7 +144,7 @@ void Server::AcceptNewClient(){
     fds.push_back(NewPoll);
 
     //SendResponse(incomingfd, RPL_CONNECTED((getClient(incomingfd)->getNickname())));
-    std::cout << GRE << "Client " << incomingfd << " connected" << WHI << std::endl;
+   // std::cout << GRE << "Client " << incomingfd << " connected" << WHI << std::endl;
 
 
 }

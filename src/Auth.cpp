@@ -71,9 +71,10 @@ void Server::cmd_nick(std::vector<std::string> splitted_cmd, int fd){
         //AJOUTER LE CHANGEMENT DE NICKNAME DANS TOUS LES CHANNELS
         if (!old.empty() && old != splitted_cmd[1])
         {
-				if(old == "*" && !cli->getUser().empty())
+				if(old == "*" && !cli->getUser().empty() )
 				{
 					cli->setLog(true);
+                     std::cout << GRE << "Client " << fd << " connected" << WHI << std::endl;
 					SendResponse(fd, RPL_CONNECTED(cli->getNickname()));
 					SendResponse(fd, RPL_NICKCHANGE(cli->getNickname(),splitted_cmd[1]));
 				}
@@ -89,6 +90,7 @@ void Server::cmd_nick(std::vector<std::string> splitted_cmd, int fd){
 	if (cli && cli->getRegister() && !cli->getUser().empty() && !cli->getNickname().empty() && cli->getNickname() != "*" && !cli->getLog())
 	{
 		cli->setLog(true);
+        std::cout << GRE << "Client " << fd << " connected" << WHI << std::endl;
 		SendResponse(fd, RPL_CONNECTED(cli->getNickname()));
 	}
 }
@@ -111,6 +113,7 @@ void Server::cmd_user(std::string cmd, int fd){
 	if(cli && cli->getRegister() && !cli->getUser().empty() && !cli->getNickname().empty() && cli->getNickname() != "*"  && !cli->getLog())
 	{
 		cli->setLog(true);
+        std::cout << GRE << "Client " << fd << " connected" << WHI << std::endl;
 		SendResponse(fd, RPL_CONNECTED(cli->getNickname()));
 	}
 }
