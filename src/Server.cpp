@@ -13,6 +13,7 @@ Server::Server(std::string name, std::string port, std::string password)
     this->_name = name;
     this->_port = atoi(port.c_str());
     this->_password = password;
+    this->clients.reserve(MAX_CLIENTS);
 }
 
 Server::~Server(){
@@ -39,7 +40,7 @@ std::string Server::getName(){
 Client *Server::getClient(int fd){
     for (size_t i = 0; i < this->clients.size(); i++){
         if (this->clients[i].getFd() == fd){
-            return &this->clients[i]; 
+            return &clients[i]; 
         }
     }
     return NULL;
@@ -123,6 +124,10 @@ void Server::SerSocket(){
 
 
 void Server::AcceptNewClient(){
+    if (clients.size() >= MAX_CLIENTS) {
+        std::cout << RED << "Client limit reached (" << MAX_CLIENTS << ")" << WHI << std::endl;
+        return;
+    }
     Client cli;
     struct sockaddr_in cliadd;
     struct pollfd NewPoll;
