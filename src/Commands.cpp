@@ -100,6 +100,15 @@ void Server::cmd_privmsg(std::string command_full, int fd)
 
 	std::getline(str, message);
 
+
+	size_t start = message.find_first_not_of(" \t\r\n");
+
+	if (start != std::string::npos) {
+		message = message.substr(start);  
+	} else {
+		message = "";  
+	}
+
 	if (message.empty())
 	{
 		SendResponse(fd, ERR_NOTEXTTOSEND(nick));
@@ -111,6 +120,7 @@ void Server::cmd_privmsg(std::string command_full, int fd)
 		message = message.substr(1);
 	}
 
+	
 	std::istringstream targetStream(targetList);
 	std::string target;
 	while (std::getline(targetStream, target, ','))
