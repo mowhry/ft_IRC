@@ -52,10 +52,32 @@ void Server::cmd_join(std::vector<std::string> splitted_cmd, int fd)
 	channel.addUser(cli);
 	if (channel.getUser().size() == 1) 
 	{
-		channel.addOperator(*cli); 
+		channel.addOperator(cli); 
 	}
 	std::string msg = ":" + cli->getNickname() + " JOIN " + chan_name + "\r\n";
 	SendResponse(fd, msg);
+	
+	// 353 response
+	std::ostringstream userList;
+    userList << ":localhost 353 " << cli->getNickname() << " = " << chan_name << " :";
+	for (size_t i = 0; i < members.size(); ++i)
+	{
+		if (channel.isOperator(members[i]->getNickname()) == true)
+		{
+			std::cout << "OPERATOR FOUND" << std::endl;
+			userList << "@" << members[i]->getNickname() << " ";
+		}
+		else
+			userList <<members[i]->getNickname() << " ";
+	}
+	userList << "\r\n";
+	SendResponse(fd, userList.str().c_str());
+
+	/// 366 response
+	std::ostringstream endOfNames;
+	endOfNames << ":localhost 366 " << cli->getNickname() << " " << chan_name << " :End of /NAMES list\r\n";
+	SendResponse(fd,endOfNames.str().c_str());
+	
 	channel.sendToAll(msg, fd, *this);
 
 	//////
@@ -201,7 +223,7 @@ void	Server::chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *c
 
 			if (splitted_cmd[2][1] == 'o'){
 				if(splitted_cmd[2][0]== '+')
-					SendResponse(fd, chan->addOperator(*getClientFromNickname(splitted_cmd[3])));
+					SendResponse(fd, chan->addOperator(getClientFromNickname(splitted_cmd[3])));
 				else
 					SendResponse(fd, chan->removeOperator(*getClientFromNickname(splitted_cmd[3])));
 			}

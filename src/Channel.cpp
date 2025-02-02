@@ -110,21 +110,21 @@ const std::vector<Client *>& Channel::getUser() const
 bool	Channel::isOperator(std::string nick){
 	for (size_t i = 0; i < _operators.size(); i++)
 	{
-		if (_operators[i].getNickname() == nick)
+		if (_operators[i]->getNickname() == nick)
 		 return true;
 	}
 	return false;
 }
 
-std::string	Channel::addOperator(Client user){
-	if (isOperator(user.getNickname())){
+std::string	Channel::addOperator(Client *user){
+	if (isOperator(user->getNickname())){
 		return("User is Already Operator");
 	}
 	for(size_t i = 0; i < _users.size(); i++)
 	{
-		if (_users[i]->getFd() == user.getFd()){
+		if (_users[i]->getFd() == user->getFd()){
 			_operators.push_back(user);
-			return(RPL_CHANGEMODE(user.getHostname(), this->_name, "+o", user.getNickname()));
+			//return(RPL_CHANGEMODE(user.getHostname(), this->_name, "+o", user->getNickname()));
 		}
 	}
 	return("User not in the Channel");
@@ -132,7 +132,7 @@ std::string	Channel::addOperator(Client user){
 
 std::string Channel::removeOperator(Client user){
 	for (size_t i = 0; i < _operators.size(); i++){
-		if (_operators[i].getFd() == user.getFd())
+		if (_operators[i]->getFd() == user.getFd())
 		{
 			_operators.erase(_operators.begin() + i);
 			return ("User Not Operator anymore");

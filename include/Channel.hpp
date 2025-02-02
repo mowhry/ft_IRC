@@ -14,7 +14,7 @@ private:
 
 	int						_userLimit;
 	std::string				_password;
-	std::vector<Client> 	_operators;
+	std::vector<Client *> 	_operators;
 	bool					_isInviteOnly;
 	bool					_isTopicRestricted;
 
@@ -44,7 +44,7 @@ public:
 	void		setTopicRestricted(bool restriction);
 
 	void		addUser(Client *user);
-	std::string	addOperator(Client user);
+	std::string	addOperator(Client *user);
 	void		removeUser(Client *user);
 	std::string	removeOperator(Client user);
 	bool		isOperator(std::string nick);
