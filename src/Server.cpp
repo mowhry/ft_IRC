@@ -231,6 +231,8 @@ void Server::exec(std::string &cmd, int fd){
         // FUNCTIONS THAT NEED YOU TO BE LOGGED IN
         if (splitted_cmd.size() && (splitted_cmd[0] == "JOIN" || splitted_cmd[0] == "join"))
             cmd_join(splitted_cmd, fd);
+		else if(splitted_cmd.size() && (splitted_cmd[0] == "PART" || splitted_cmd[0] == "part"))
+        	cmd_part(splitted_cmd, fd);
         else if(splitted_cmd.size() && (splitted_cmd[0] == "PRIVMSG" || splitted_cmd[0] == "privmsg"))
             cmd_privmsg(cmd, fd);
         else if(splitted_cmd.size() && (splitted_cmd[0] == "MODE" || splitted_cmd[0] == "mode"))

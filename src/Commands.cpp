@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Commands.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tkavisha <tkavisha@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/02 18:45:50 by tkavisha          #+#    #+#             */
+/*   Updated: 2025/02/02 19:12:45 by tkavisha         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/Server.hpp"
 #include "../include/Client.hpp"
 #include "../include/Replies.hpp"
@@ -89,6 +101,69 @@ void Server::cmd_join(std::vector<std::string> splitted_cmd, int fd)
 	/////
 }
 
+
+/// ### PART ###
+void Server::cmd_part(std::vector<std::string> splitted_cmd, int fd)
+{
+	Client *cli = getClient(fd);
+	std::string nick = cli->getNickname();
+
+	if (splitted_cmd.size() < 2 || splitted_cmd[1].empty())
+	{
+		SendResponse(fd, ERR_NOTENOUGHPARAM(nick));
+		return;
+	}
+
+	if (!cli->getLog())
+	{
+		SendResponse(fd, ERR_NOTREGISTERED(nick));
+		return;
+	}
+
+	//check if channel exists
+	if (checkExist_chan(splitted_cmd[1]) == false)
+	{
+		std::ostringstream msg;
+		msg << ":localhost 403 " << nick << " " << splitted_cmd[1] << " :No such channel\r\n";
+		SendResponse(fd,msg.str().c_str());
+		return;
+	}
+	
+	Channel &channel = channels[splitted_cmd[1]];
+	//check if client is in the channel
+	const std::vector<Client*> &members = channel.getUser();
+	int is_present = 0;
+	for (size_t i = 0; i < members.size(); ++i)
+	{
+		if (members[i] == cli)
+			is_present = 1;
+	}
+	if (is_present == 0)
+	{
+		std::ostringstream msg;
+		msg << ":localhost 442 " << nick << " " << splitted_cmd[1] << " :You're not on that channel\r\n";
+		SendResponse(fd,msg.str().c_str());
+		return;
+	}
+
+	//part message
+	std::ostringstream msg;
+	msg << ":" << nick << " PART " << splitted_cmd[1];
+	if (splitted_cmd.size() > 2)
+		msg << " " << splitted_cmd[2];
+	msg << "\r\n";
+	SendResponse(fd, msg.str().c_str());
+	channel.sendToAll(msg.str().c_str(), fd, *this);
+
+	//remove fron operator if present
+	if (channel.isOperator(nick) == true)
+		channel.removeOperator(cli);
+	// remove from the channel client list
+	channel.removeUser(cli);
+	//delete channel if empty
+	if (channel.is_channel_empty())
+		channels.erase(splitted_cmd[1]);
+}
 
 
 
@@ -225,7 +300,7 @@ void	Server::chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *c
 				if(splitted_cmd[2][0]== '+')
 					SendResponse(fd, chan->addOperator(getClientFromNickname(splitted_cmd[3])));
 				else
-					SendResponse(fd, chan->removeOperator(*getClientFromNickname(splitted_cmd[3])));
+					SendResponse(fd, chan->removeOperator(getClientFromNickname(splitted_cmd[3])));
 			}
 			else if (splitted_cmd[2][1] == 'i')
 				invite_mode(splitted_cmd[2][0], chan, fd);

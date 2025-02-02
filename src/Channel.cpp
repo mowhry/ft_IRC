@@ -130,9 +130,9 @@ std::string	Channel::addOperator(Client *user){
 	return("User not in the Channel");
 }
 
-std::string Channel::removeOperator(Client user){
+std::string Channel::removeOperator(Client *user){
 	for (size_t i = 0; i < _operators.size(); i++){
-		if (_operators[i]->getFd() == user.getFd())
+		if (_operators[i]->getFd() == user->getFd())
 		{
 			_operators.erase(_operators.begin() + i);
 			return ("User Not Operator anymore");
@@ -150,4 +150,11 @@ void Channel::sendToAll(const std::string &msg, int senderFd, Server &server)
 			server.SendResponse(_users[i]->getFd(), msg);
 		}
 	}
+}
+
+bool 		Channel::is_channel_empty()
+{
+	if (_users.empty())
+		return true;
+	return false;
 }

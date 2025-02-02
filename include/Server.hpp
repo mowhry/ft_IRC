@@ -63,6 +63,7 @@ class Server{
         void cmd_user(std::string cmd, int fd);
         void cmd_nick(std::vector<std::string> splitted_cmd, int fd);
         void cmd_join(std::vector<std::string> splitted_cmd, int fd);
+		void cmd_part(std::vector<std::string> splitted_cmd, int fd);
 		void cmd_privmsg(std::string command_full, int fd);
         void cmd_mode(std::vector<std::string> splitted_cmd, int fd);
 
