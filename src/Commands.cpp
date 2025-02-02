@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Commands.cpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tkavisha <tkavisha@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/02 18:45:50 by tkavisha          #+#    #+#             */
-/*   Updated: 2025/02/02 19:12:45 by tkavisha         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "../include/Server.hpp"
 #include "../include/Client.hpp"
@@ -66,7 +55,7 @@ void Server::cmd_join(std::vector<std::string> splitted_cmd, int fd)
 	{
 		channel.addOperator(cli); 
 	}
-	std::string msg = ":" + cli->getNickname() + " JOIN " + chan_name + "\r\n";
+	std::string msg = ":" + cli->getNickname()+"@localhost" + " JOIN " + chan_name + "\r\n";
 	SendResponse(fd, msg);
 	
 	// 353 response
