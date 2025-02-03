@@ -248,7 +248,7 @@ void Server::cmd_kick(std::vector<std::string> splitted_cmd ,std::string command
 	
 	//send kick message to all user in the channel
 	std::ostringstream msg;
-	msg << ":" << nick << " KICK " << channel_name << " " << target;
+	msg << ":" << nick << "@localhost KICK " << channel_name << " " << target;
 	if (!comment.empty())
 		msg << " :" << comment;
 	msg << "\r\n";
