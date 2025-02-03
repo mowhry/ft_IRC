@@ -235,6 +235,8 @@ void Server::exec(std::string &cmd, int fd){
         	cmd_part(splitted_cmd, fd);
         else if(splitted_cmd.size() && (splitted_cmd[0] == "PRIVMSG" || splitted_cmd[0] == "privmsg"))
             cmd_privmsg(cmd, fd);
+		else if(splitted_cmd.size() && (splitted_cmd[0] == "KICK" || splitted_cmd[0] == "kick"))
+            cmd_kick(splitted_cmd,cmd, fd);
         else if(splitted_cmd.size() && (splitted_cmd[0] == "MODE" || splitted_cmd[0] == "mode"))
             cmd_mode(splitted_cmd, fd);
         else

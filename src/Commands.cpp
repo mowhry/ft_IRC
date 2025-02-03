@@ -166,7 +166,99 @@ int Server::getfdfromNickname(std::string nickname)
 	return (-1);
 }
 
+void Server::cmd_kick(std::vector<std::string> splitted_cmd ,std::string command_full, int fd)
+{
+	Client *cli = getClient(fd);
+	std::string nick = cli->getNickname();
 
+	if (splitted_cmd.size() < 3 || splitted_cmd[1].empty())
+	{
+		SendResponse(fd, ERR_NOTENOUGHPARAM(nick));
+		return;
+	}
+
+	//parsing
+	std::istringstream str(command_full);
+	std::string cmd, channel_name, target, comment;
+	
+	str >> cmd >> channel_name >> target;
+	std::getline(str, comment);
+	size_t start = comment.find_first_not_of(" \t\r\n");
+	if (start != std::string::npos) {
+		comment = comment.substr(start);  
+	} else {
+		comment = "";  
+	}
+	if (comment[0] == ':')
+	{
+		comment = comment.substr(1);
+	}
+
+	//check if channel exists
+	if (checkExist_chan(splitted_cmd[1]) == false)
+	{
+		std::ostringstream msg;
+		msg << ":localhost 403 " << nick << " " << splitted_cmd[1] << " :No such channel\r\n";
+		SendResponse(fd,msg.str().c_str());
+		return;
+	}
+
+	Channel &channel = channels[splitted_cmd[1]];
+
+	//check if client is in the channel
+	const std::vector<Client*> &members = channel.getUser();
+	int is_present = 0;
+	for (size_t i = 0; i < members.size(); ++i)
+	{
+		if (members[i] == cli)
+			is_present = 1;
+	}
+	if (is_present == 0)
+	{
+		std::ostringstream msg;
+		msg << ":localhost 442 " << nick << " " << splitted_cmd[1] << " :You're not on that channel\r\n";
+		SendResponse(fd,msg.str().c_str());
+		return;
+	}
+
+	// Check if target user exists in the channel
+	is_present = 0;
+	for (size_t i = 0; i < members.size(); ++i)
+	{
+		if (members[i]->getNickname() == target)
+			is_present = 1;
+	}
+	if (is_present == 0)
+	{
+		std::ostringstream msg;
+		msg << ":localhost 441 " << nick << " " << splitted_cmd[1] << " :They aren't on that channel\r\n";
+		SendResponse(fd,msg.str().c_str());
+		return;
+	}
+
+
+	//check if client is operator or the target is an operator
+	if (channel.isOperator(nick) == false || channel.isOperator(target) == true)
+	{
+		std::ostringstream msg;
+		msg << ":localhost 482 " << nick << " " << splitted_cmd[1] << " :You're not channel operator\r\n";
+		SendResponse(fd,msg.str().c_str());
+		return;
+	}
+	
+	//send kick message to all user in the channel
+	std::ostringstream msg;
+	msg << ":" << nick << " KICK " << channel_name << " " << target;
+	if (!comment.empty())
+		msg << " :" << comment;
+	msg << "\r\n";
+	SendResponse(fd, msg.str().c_str());
+	channel.sendToAll(msg.str().c_str(), fd, *this);
+
+	//remove target user from channel
+	channel.removeUser(getClientFromNickname(target));
+
+}
 
 void Server::cmd_privmsg(std::string command_full, int fd)
 {
