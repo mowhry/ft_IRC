@@ -137,7 +137,7 @@ void Server::cmd_part(std::vector<std::string> splitted_cmd, int fd)
 
 	//part message
 	std::ostringstream msg;
-	msg << ":" << nick << " PART " << splitted_cmd[1];
+	msg << ":" << nick << "@localhost PART " << splitted_cmd[1];
 	if (splitted_cmd.size() > 2)
 		msg << " " << splitted_cmd[2];
 	msg << "\r\n";
