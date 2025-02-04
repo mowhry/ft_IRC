@@ -350,8 +350,31 @@ bool Server::checkExist_chan(std::string name){
 
 void Server::cmd_mode(std::vector<std::string> splitted_cmd, int fd)
 {
-	if (splitted_cmd.size() < 3)
+	Client *cli = getClient(fd);
+	std::string nick = cli->getNickname();
+
+	if (splitted_cmd.size() < 2)
 		return;
+
+	if (splitted_cmd.size() == 2 && checkExist_chan(splitted_cmd[1]))
+	{
+		Channel &channel = channels[splitted_cmd[1]];
+		std::cout << "USERlimit: " <<channel.getUserLimit() << std::endl;
+		std::ostringstream msg;
+		msg << ":localhost 324 " << nick << " " << splitted_cmd[1] <<" :+";
+		if (channel.getInviteOnly())
+			msg << "i";
+		if (channel.getTopicRestricted())
+			msg << "t";
+		if (channel.getPassword() != "")
+			msg << "k";
+		if (channel.getUserLimit() != -1)
+			msg << "l";
+		msg << "\r\n";
+		SendResponse(fd, msg.str().c_str());
+		return;
+	}
+
 	if (splitted_cmd[1][0] == '#')
 	{
 		if(checkExist_chan(splitted_cmd[1]) && (splitted_cmd.size() == 4 || splitted_cmd.size() == 3) )

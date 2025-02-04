@@ -19,6 +19,7 @@ private:
 	bool					_isTopicRestricted;
 
 
+
 public:
 	Channel();
 	Channel(const Channel &copy);

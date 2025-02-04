@@ -6,14 +6,15 @@ Channel::Channel() : _name(""), _users(),  _userLimit(-1), _password(""), _opera
 {
 }
 
-Channel::Channel(const std::string &name) : _name(name), _users(), _userLimit(0), _password(""), _operators(), _isInviteOnly(false), _isTopicRestricted(false)
+Channel::Channel(const std::string &name) : _name(name), _users(), _userLimit(-1), _password(""), _operators(), _isInviteOnly(false), _isTopicRestricted(false)
 {
 }
 
-Channel::Channel(const Channel &copy)
+Channel::Channel(const Channel &copy) : _name(copy._name), _users(copy._users), _userLimit(copy._userLimit), 
+      _password(copy._password), _operators(copy._operators), 
+      _isInviteOnly(copy._isInviteOnly), _isTopicRestricted(copy._isTopicRestricted)
 {
-	this->_name = copy._name;
-	this->_users = copy._users;
+	
 }
 
 Channel::~Channel()
@@ -22,12 +23,17 @@ Channel::~Channel()
 
 Channel& Channel::operator=(const Channel &other)
 {
-	if (this != &other)
-	{
-		this->_name = other._name;
-		this->_users = other._users;
-	}
-	return *this;
+	 if (this != &other)
+    {
+        _name = other._name;
+        _users = other._users;
+        _userLimit = other._userLimit;
+        _password = other._password;
+        _operators = other._operators;
+        _isInviteOnly = other._isInviteOnly;
+        _isTopicRestricted = other._isTopicRestricted;
+    }
+    return *this;
 }
 
 //#### GETTERS 
