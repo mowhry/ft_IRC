@@ -164,3 +164,13 @@ bool 		Channel::is_channel_empty()
 		return true;
 	return false;
 }
+
+bool Channel::isUserInChannel(const std::string &nickname)
+{
+    for (size_t i = 0; i < _users.size(); i++)
+    {
+        if (_users[i]->getNickname() == nickname)
+            return true;
+    }
+    return false;
+}

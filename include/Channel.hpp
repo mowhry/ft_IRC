@@ -50,6 +50,7 @@ public:
 	std::string	removeOperator(Client *user);
 	bool		isOperator(std::string nick);
 	bool 		is_channel_empty();
+	bool 		isUserInChannel(const std::string &nickname);
 
 	void sendToAll(const std::string &msg, int senderFd, Server &server);
 

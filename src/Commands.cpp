@@ -402,6 +402,22 @@ void	Server::chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *c
 		if ((splitted_cmd[2][0] == '+' ||  splitted_cmd[2][0] == '-') && (splitted_cmd[2].size() == 2))
 		{
 			if (splitted_cmd[2][1] == 'o'){
+
+				//check if there is a target
+				if (splitted_cmd.size() == 3)
+				{
+					SendResponse(fd,": 696 "+nick+" "+splitted_cmd[1]+" o * :You must specify a parameter for the op mode. Syntax: <nick>.\r\n");
+					return;
+				}
+
+				//check if target is valid
+				if (chan->isUserInChannel(splitted_cmd[3]) == false)
+				{
+					std::cout << "Enter" << std::endl;
+					SendResponse(fd,": 401 "+nick+" "+splitted_cmd[3]+" :No such nick\r\n");
+					return;
+				}
+
 				if(splitted_cmd[2][0]== '+')
 				{
 					chan->addOperator(getClientFromNickname(splitted_cmd[3]));
