@@ -355,11 +355,10 @@ void Server::cmd_mode(std::vector<std::string> splitted_cmd, int fd)
 
 	if (splitted_cmd.size() < 2)
 		return;
-
+	// when no modstring is given
 	if (splitted_cmd.size() == 2 && checkExist_chan(splitted_cmd[1]))
 	{
 		Channel &channel = channels[splitted_cmd[1]];
-		std::cout << "USERlimit: " <<channel.getUserLimit() << std::endl;
 		std::ostringstream msg;
 		msg << ":localhost 324 " << nick << " " << splitted_cmd[1] <<" :+";
 		if (channel.getInviteOnly())
@@ -375,21 +374,24 @@ void Server::cmd_mode(std::vector<std::string> splitted_cmd, int fd)
 		return;
 	}
 
+
 	if (splitted_cmd[1][0] == '#')
 	{
 		if(checkExist_chan(splitted_cmd[1]) && (splitted_cmd.size() == 4 || splitted_cmd.size() == 3) )
 			chan_mode(splitted_cmd, fd, getChan(splitted_cmd[1]));
-		else if (splitted_cmd.size() <= 4)
-			SendResponse(fd, ERR_NOTENOUGHPARAM(getNicknameFromFd(fd)));	
+		//else if (splitted_cmd.size() <= 4)
+		//	SendResponse(fd, ERR_NOTENOUGHPARAM(getNicknameFromFd(fd)));	
 		else
 			SendResponse(fd, ERR_NOSUCHCHANNEL(splitted_cmd[1]));
 	}
 		return;
-
-
 }
 
 void	Server::chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *chan){
+
+	Client *cli = getClient(fd);
+	std::string nick = cli->getNickname();
+
 	if (splitted_cmd[2].size() != 2){
 
 		SendResponse (fd, "Error on format\n");
@@ -397,14 +399,21 @@ void	Server::chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *c
 	}
 	if (chan->isOperator(getNicknameFromFd(fd)))
 	{
-		if ((splitted_cmd[2][0] != '+' ||  splitted_cmd[2][0] != '-') && (splitted_cmd[2].size() == 2))
+		if ((splitted_cmd[2][0] == '+' ||  splitted_cmd[2][0] == '-') && (splitted_cmd[2].size() == 2))
 		{
-
 			if (splitted_cmd[2][1] == 'o'){
 				if(splitted_cmd[2][0]== '+')
-					SendResponse(fd, chan->addOperator(getClientFromNickname(splitted_cmd[3])));
+				{
+					chan->addOperator(getClientFromNickname(splitted_cmd[3]));
+					SendResponse(fd, ":"+nick+"@localhost MODE "+splitted_cmd[1]+" +o :"+splitted_cmd[3]+"\r\n");
+					chan->sendToAll(":"+nick+"@localhost MODE "+splitted_cmd[1]+" +o :"+splitted_cmd[3]+"\r\n",fd, *this);
+				}
 				else
-					SendResponse(fd, chan->removeOperator(getClientFromNickname(splitted_cmd[3])));
+				{
+					chan->removeOperator(getClientFromNickname(splitted_cmd[3]));
+					SendResponse(fd, ":"+nick+"@localhost MODE "+splitted_cmd[1]+" -o :"+splitted_cmd[3]+"\r\n");
+					chan->sendToAll(":"+nick+"@localhost MODE "+splitted_cmd[1]+" -o :"+splitted_cmd[3]+"\r\n",fd, *this);
+				}
 			}
 			else if (splitted_cmd[2][1] == 'i')
 				invite_mode(splitted_cmd[2][0], chan, fd);
