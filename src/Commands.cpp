@@ -241,7 +241,7 @@ void Server::cmd_kick(std::vector<std::string> splitted_cmd ,std::string command
 	if (channel.isOperator(nick) == false || channel.isOperator(target) == true)
 	{
 		std::ostringstream msg;
-		msg << ":localhost 482 " << nick << " " << splitted_cmd[1] << " :You're not channel operator\r\n";
+		msg << ":localhost 482 " << nick << " " << splitted_cmd[1] << " :You're not channel operator or the target is an operator\r\n";
 		SendResponse(fd,msg.str().c_str());
 		return;
 	}
@@ -360,7 +360,7 @@ void Server::cmd_mode(std::vector<std::string> splitted_cmd, int fd)
 	{
 		Channel &channel = channels[splitted_cmd[1]];
 		std::ostringstream msg;
-		msg << ":localhost 324 " << nick << " " << splitted_cmd[1] <<" :+";
+		msg << ":localhost 324 " << nick << " " << splitted_cmd[1] <<" +";
 		if (channel.getInviteOnly())
 			msg << "i";
 		if (channel.getTopicRestricted())
@@ -368,7 +368,7 @@ void Server::cmd_mode(std::vector<std::string> splitted_cmd, int fd)
 		if (channel.getPassword() != "")
 			msg << "k";
 		if (channel.getUserLimit() != -1)
-			msg << "l";
+			msg << "l :" << channel.getUserLimit();
 		msg << "\r\n";
 		SendResponse(fd, msg.str().c_str());
 		return;
@@ -432,22 +432,19 @@ void	Server::chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *c
 				}
 			}
 			else if (splitted_cmd[2][1] == 'i')
-				invite_mode(splitted_cmd[2][0], chan, fd);
+				invite_mode(splitted_cmd[2][0], chan, fd, splitted_cmd);
 			else if (splitted_cmd[2][1]== 'l')
 			{
-				if(splitted_cmd.size() > 3)
-					limit_mode(splitted_cmd[2][0], chan, fd, splitted_cmd[3]);
-				else
-					SendResponse(fd, ERR_NEEDMODEPARAM(chan->getName(),"l"));
+				limit_mode(splitted_cmd[2][0], chan, fd, splitted_cmd);
 			}
 			else if (splitted_cmd[2][1] == 't')
-				topic_mode(splitted_cmd[2][0], chan, fd);
+				topic_mode(splitted_cmd[2][0], chan, fd, splitted_cmd);
 			else if (splitted_cmd[2][1] == 'k')
 			{
 				if(splitted_cmd.size() > 3)
 					password_mode(splitted_cmd[2][0], chan, fd, splitted_cmd[3]);
 				else
-					SendResponse(fd, ERR_NEEDMODEPARAM(chan->getName(),"k"));
+					SendResponse(fd, ERR_NEEDMODEPARAM(nick,chan->getName(),"k"));
 
 			}
 
@@ -459,33 +456,37 @@ void	Server::chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *c
 }
 
 
-void	Server::invite_mode(char c, Channel *chan, int fd)
+void	Server::invite_mode(char c, Channel *chan, int fd, std::vector<std::string> splitted_cmd)
 {
 	if (c =='+')
 	{
 		chan->setInviteOnly(true);
-		SendResponse(fd, RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "+i", ""));	//sendtoall
+		SendResponse(fd, ":"+getNicknameFromFd(fd)+"@localhost MODE "+splitted_cmd[1]+" :+i\r\n");
+		chan->sendToAll(":"+getNicknameFromFd(fd)+"@localhost MODE "+splitted_cmd[1]+" :+i\r\n",fd, *this);
 	}
 
 	else if (c =='-')
 	{
 		chan->setInviteOnly(false);
-		SendResponse(fd, RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "-i", ""));	//sendtoall
+		SendResponse(fd, ":"+getNicknameFromFd(fd)+"@localhost MODE "+splitted_cmd[1]+" :-i\r\n");
+		chan->sendToAll(":"+getNicknameFromFd(fd)+"@localhost MODE "+splitted_cmd[1]+" :-i\r\n",fd, *this);
 	}
 }
 
-void Server::topic_mode(char c, Channel *chan, int fd)
+void Server::topic_mode(char c, Channel *chan, int fd, std::vector<std::string> splitted_cmd)
 {
 	if (c =='+')
 	{
 		chan->setTopicRestricted(true);
-		SendResponse(fd, RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "+t", ""));	//sendtoall
+		SendResponse(fd, ":"+getNicknameFromFd(fd)+"@localhost MODE "+splitted_cmd[1]+" :+t\r\n");
+		chan->sendToAll(":"+getNicknameFromFd(fd)+"@localhost MODE "+splitted_cmd[1]+" :+t\r\n",fd, *this);
 	}
 
 	else if (c =='-')
 	{
 		chan->setTopicRestricted(false);
-		SendResponse(fd, RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "-t", ""));	//sendtoall
+		SendResponse(fd, ":"+getNicknameFromFd(fd)+"@localhost MODE "+splitted_cmd[1]+" :-t\r\n");
+		chan->sendToAll(":"+getNicknameFromFd(fd)+"@localhost MODE "+splitted_cmd[1]+" :-t\r\n",fd, *this);
 	}
 }
 
@@ -494,22 +495,30 @@ bool Server::isvalid_limit(std::string& limit)
 	return (!(limit.find_first_not_of("0123456789")!= std::string::npos) && std::atoi(limit.c_str()) > 0);
 }
 
-void	Server::limit_mode(char c, Channel *chan, int fd, std::string limit)
+void	Server::limit_mode(char c, Channel *chan, int fd, std::vector<std::string> splitted_cmd)
 {
 	if (c == '+')
 	{
-		if (!isvalid_limit(limit))
-			SendResponse(fd, ERR_INVALIDMODEPARAM(chan->getName(),"l"));
+		if (splitted_cmd.size() == 3)
+		{
+			SendResponse(fd, ERR_NEEDMODEPARAM(getNicknameFromFd(fd),chan->getName(),"l"));
+			return ;
+		}
+		
+		if (!isvalid_limit(splitted_cmd[3]))
+			SendResponse(fd, ERR_INVALIDMODEPARAM(getNicknameFromFd(fd),chan->getName(),"l",splitted_cmd[3]));
 		else 
 		{
-			chan->setUserLimit(std::atoi(limit.c_str()));
-			SendResponse(fd, RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "+l", limit));	//sendtoall
+			chan->setUserLimit(std::atoi(splitted_cmd[3].c_str()));
+			SendResponse(fd, ":"+getNicknameFromFd(fd)+"@localhost MODE "+splitted_cmd[1]+" +l :"+splitted_cmd[3]+"\r\n");
+			chan->sendToAll(":"+getNicknameFromFd(fd)+"@localhost MODE "+splitted_cmd[1]+" +l :"+splitted_cmd[3]+"\r\n",fd, *this);
 		}
 	}
 	else
 	{
-		chan->setUserLimit(0);
-		SendResponse(fd, RPL_CHANGEMODE(getClient(fd)->getHostname(), this->_name, "+l", "0"));	//sendtoall
+		chan->setUserLimit(-1);
+		SendResponse(fd, ":"+getNicknameFromFd(fd)+"@localhost MODE "+splitted_cmd[1]+" :-l\r\n");
+		chan->sendToAll(":"+getNicknameFromFd(fd)+"@localhost MODE "+splitted_cmd[1]+" :-l\r\n",fd, *this);
 	}
 }
 
@@ -527,8 +536,8 @@ bool isvalidPassword(std::string password)
 
 
 void	Server::password_mode(char c, Channel *chan, int fd, std::string pass){
-	if (!isvalidPassword(pass))
-		SendResponse(fd, ERR_INVALIDMODEPARAM(chan->getName(),"k"));
+	//if (!isvalidPassword(pass))
+		//SendResponse(fd, ERR_INVALIDMODEPARAM(c,chan->getName(),"k", "value"));
 	if (c == '+')
 	{
 		chan->setPassword(pass);

@@ -84,9 +84,9 @@ class Server{
 		int     getfdfromNickname(std::string nickname);
         std::string  getNicknameFromFd(int fd);
         void	chan_mode(std::vector<std::string> splitted_cmd, int fd, Channel *chan);
-        void	invite_mode(char c, Channel *chan, int fd);
-        void	limit_mode(char c, Channel *chan, int fd, std::string limit);
-        void	topic_mode(char c, Channel *chan, int fd);
+        void	invite_mode(char c, Channel *chan, int fd, std::vector<std::string> splitted_cmd);
+        void	limit_mode(char c, Channel *chan, int fd, std::vector<std::string> splitted_cmd);
+        void	topic_mode(char c, Channel *chan, int fd, std::vector<std::string> splitted_cmd);
         void	password_mode(char c, Channel *chan, int fd, std::string pass);
         bool    isvalid_limit(std::string& limit);
 };

@@ -19,6 +19,6 @@
 #define ERR_NOSUCHNICK(name) (": 401 " + name + " :No such nick\r\n")
 #define ERR_NOSUCHCHANNEL(name) (": 403 " + name + " :No such channel\r\n")
 #define ERR_UNKNOWNMODE(nickname, channelname, mode) (": 472 " + nickname + " #" + channelname + " " + mode + " :is not a recognised channel mode" + "\r\n")
-#define ERR_INVALIDMODEPARAM(channelname, mode) (": 696 " + channelname + " Invalid mode parameter. " + mode + "\r\n")
-#define ERR_NEEDMODEPARAM(channelname, mode) (": 696 #" + channelname + " * You must specify a parameter for the key mode. " + mode + "\r\n")
+#define ERR_INVALIDMODEPARAM(nickname, channelname, mode, value) (": 696 "+nickname+" "+ channelname +" "+mode+" "+value+ " :Invalid mode parameter.\r\n")
+#define ERR_NEEDMODEPARAM(nickname,channelname, mode) (": 696 " + nickname +" " + channelname +" "+mode + " * :You must specify a parameter for the key mode.\r\n")
 #define ERR_KEYSET(channelname) (": 467 #" + channelname + " Channel key already set. " + "\r\n")
