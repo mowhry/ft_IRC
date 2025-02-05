@@ -50,6 +50,23 @@ void Server::cmd_join(std::vector<std::string> splitted_cmd, int fd)
 		}
 	}
 
+	//check mode k
+	if (channel.getPassword() != "")
+	{
+		if (splitted_cmd.size() == 2 || (splitted_cmd.size() > 2 && splitted_cmd[2] != channel.getPassword()))
+		{
+			SendResponse(fd, ": 475 "+nick+" "+splitted_cmd[1]+" :Cannot join channel (incorrect channel key)\r\n");
+			return ;
+		}
+	}
+
+	//check mode l
+	if (channel.getUserLimit() != -1 && members.size() >= static_cast<size_t>(channel.getUserLimit()))
+	{
+		SendResponse(fd, ": 471 "+nick+" "+splitted_cmd[1]+" :Cannot join channel (channel is full)\r\n");
+		return ;
+	}
+
 	channel.addUser(cli);
 	if (channel.getUser().size() == 1) 
 	{
