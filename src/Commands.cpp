@@ -10,7 +10,20 @@ void Server::cmd_quit(std::string cmd, int fd){
 
         // retirer le fd dans tous les channels etc
         (void) cmd;
+		std::string rpl = ":"+ getNicknameFromFd(fd) + " @localhost QUIT :Quit: Bye for now !\r\n";
+		std::string rpl2 = ":" + getNicknameFromFd(fd) + " @localhost QUIT :Bye for now\r\n";
         std::cout << RED << "Client " << fd << " disconnected" << WHI << std::endl;
+		for(std::map<std::string, Channel>::iterator it =  channels.begin(); it != channels.end(); ++it)
+		{
+			if (it->second.isUserInChannel(getNicknameFromFd(fd)))
+			{
+				if (it->second.isOperator(getNicknameFromFd(fd)))
+					it->second.removeOperator(getClient(fd));
+				it->second.removeUser(getClient(fd));	
+				
+				it->second.sendToAll(rpl, fd, *this);
+			}
+		}
         ClearClients(fd);
         close(fd);
 }
