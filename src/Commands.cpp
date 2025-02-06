@@ -10,20 +10,37 @@ void Server::cmd_quit(std::string cmd, int fd){
 
         // retirer le fd dans tous les channels etc
         (void) cmd;
-		std::string rpl = ":"+ getNicknameFromFd(fd) + " @localhost QUIT :Quit: Bye for now !\r\n";
-		std::string rpl2 = ":" + getNicknameFromFd(fd) + " @localhost QUIT :Bye for now\r\n";
+		Client *cli = getClient(fd);
+    	if (!cli) return;
+
+		std::string rpl = ":"+ getNicknameFromFd(fd) + "@localhost QUIT :Quit: Bye for now !\r\n";
+		std::string rpl2 = ":" + getNicknameFromFd(fd) + "@localhost QUIT :Bye for now\r\n";
         std::cout << RED << "Client " << fd << " disconnected" << WHI << std::endl;
+		
+		std::vector<std::string> emptyChannels;
 		for(std::map<std::string, Channel>::iterator it =  channels.begin(); it != channels.end(); ++it)
 		{
-			if (it->second.isUserInChannel(getNicknameFromFd(fd)))
+			Channel &channel = it->second;
+			if (channel.isUserInChannel(cli->getNickname())) 
 			{
-				if (it->second.isOperator(getNicknameFromFd(fd)))
-					it->second.removeOperator(getClient(fd));
-				it->second.removeUser(getClient(fd));	
-				
-				it->second.sendToAll(rpl, fd, *this);
-			}
+            	channel.sendToAll(rpl, fd, *this);
+				if(channel.isOperator(getNicknameFromFd(fd)))
+					channel.removeOperator(cli);
+            	channel.removeUser(cli);
+
+            // **Check if the channel is now empty**
+            	if (channel.is_channel_empty()) 
+				{
+                	emptyChannels.push_back(it->first);
+            	}
+        	}
 		}
+ 		for (size_t i = 0; i < emptyChannels.size(); i++) 
+		{
+        	channels.erase(emptyChannels[i]);
+			std::cout << "Deleted empty channel: " << emptyChannels[i] << std::endl;
+    	}
+
         ClearClients(fd);
         close(fd);
 }
@@ -170,14 +187,7 @@ void Server::cmd_part(std::vector<std::string> splitted_cmd, int fd)
 	
 	Channel &channel = channels[splitted_cmd[1]];
 	//check if client is in the channel
-	const std::vector<Client*> &members = channel.getUser();
-	int is_present = 0;
-	for (size_t i = 0; i < members.size(); ++i)
-	{
-		if (members[i] == cli)
-			is_present = 1;
-	}
-	if (is_present == 0)
+	if (!channel.isUserInChannel(nick))
 	{
 		std::ostringstream msg;
 		msg << ":localhost 442 " << nick << " " << splitted_cmd[1] << " :You're not on that channel\r\n";
