@@ -9,6 +9,7 @@ class Server;
 class Channel{
 private:
 	std::string				_name;
+	std::string				_topic;
 	std::vector<Client *>	_users;
 
 
@@ -34,7 +35,8 @@ public:
 	bool		getInviteOnly();
 	bool 		getTopicRestricted();
 	const std::vector<Client *>& getUser() const;
-	
+	std::string getTopic() const;
+
 
 
 
@@ -43,6 +45,7 @@ public:
 	void		setPassword (std::string pass);
 	void		setInviteOnly(bool invite);
 	void		setTopicRestricted(bool restriction);
+	void 		setTopic(const std::string &topic);
 
 	void		addUser(Client *user);
 	std::string	addOperator(Client *user);

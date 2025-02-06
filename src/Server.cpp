@@ -241,6 +241,8 @@ void Server::exec(std::string &cmd, int fd){
             cmd_mode(splitted_cmd, fd);
         else if(splitted_cmd.size() && (splitted_cmd[0] == "INVITE" || splitted_cmd[0] == "invite"))
             cmd_invite(splitted_cmd, fd);
+		else if(splitted_cmd.size() && (splitted_cmd[0] == "TOPIC" || splitted_cmd[0] == "topic"))
+            cmd_topic(splitted_cmd, fd);
         else
             SendResponse(fd, ERR_CMDNOTFOUND(getClient(fd)->getNickname(),splitted_cmd[0]));
     }

@@ -84,6 +84,16 @@ void Server::cmd_join(std::vector<std::string> splitted_cmd, int fd)
 	}
 	std::string msg = ":" + cli->getNickname()+"@localhost" + " JOIN " + chan_name + "\r\n";
 	SendResponse(fd, msg);
+
+	//send topic when joining
+	if (channel.getTopic() == "") 
+	{
+		SendResponse(fd, ": 331 " + nick + " " + chan_name + " :No topic is set.\r\n");
+	} 
+	else 
+	{
+		SendResponse(fd, ": 332 " + nick + " " + chan_name + " :" + channel.getTopic() + "\r\n");
+	}
 	
 	// 353 response
 	std::ostringstream userList;
@@ -642,4 +652,70 @@ void	Server::cmd_invite(std::vector<std::string> splitted_cmd, int fd)
 		SendResponse(fd, rep1);
 	std::string rep2 = ":"+ clt->getHostname() + " INVITE " + clt->getNickname() + " " + splitted_cmd[2]+"\r\n";
 		SendResponse(clt->getFd(), rep2);
+}
+
+//##### TOPIC #####
+
+void	Server::cmd_topic(std::vector<std::string> splitted_cmd, int fd)
+{
+	Client *cli = getClient(fd);
+    std::string nick = cli->getNickname();
+
+    if (splitted_cmd.size() < 2) 
+	{
+        SendResponse(fd, ERR_NOTENOUGHPARAM(nick));
+        return;
+    }
+
+    std::string chan_name = splitted_cmd[1];
+
+	//check if channel exists
+    if (channels.find(chan_name) == channels.end()) 
+	{
+        SendResponse(fd, ": 403 "+ nick +" "+splitted_cmd[1]+" :No such channel\r\n");
+        return;
+    }
+
+    Channel &channel = channels[chan_name];
+
+    //check if the user is member of the channel
+    if (!channel.isUserInChannel(nick)) 
+	{
+        SendResponse(fd, ": 442 "+ nick +" "+splitted_cmd[1]+" :You're not on that channel!\r\n");
+        return;
+    }
+
+    //check if topic is given or not
+    if (splitted_cmd.size() == 2) 
+	{
+        if (channel.getTopic() == "") 
+		{
+            SendResponse(fd, ": 331 " + nick + " " + chan_name + " :No topic is set.\r\n");
+        } 
+		else 
+		{
+            SendResponse(fd, ": 332 " + nick + " " + chan_name + " :" + channel.getTopic() + "\r\n");
+        }
+        return;
+    }
+
+    //check if mode t is active
+    if (channel.getTopicRestricted() == true && channel.isOperator(nick) == false) 
+	{
+        SendResponse(fd, ": 482 "+ nick +" "+splitted_cmd[1]+" :You must be a channel op to change the topic.\r\n");
+        return;
+    }
+
+    // **Définir le nouveau sujet**
+    std::string newTopic = splitted_cmd[2];
+    for (size_t i = 3; i < splitted_cmd.size(); i++) {
+        newTopic += " " + splitted_cmd[i];
+    }
+
+    channel.setTopic(newTopic);
+
+    //send to everyone on the channel
+    std::string topicMsg = ":" + nick + "@localhost TOPIC " + chan_name + " " + newTopic + "\r\n";
+	SendResponse(fd,topicMsg);
+    channel.sendToAll(topicMsg, fd, *this);
 }

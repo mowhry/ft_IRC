@@ -2,15 +2,15 @@
 #include "../include/Server.hpp"
 #include "algorithm"
 
-Channel::Channel() : _name(""), _users(),  _userLimit(-1), _password(""), _operators(), _isInviteOnly(false), _isTopicRestricted(false)
+Channel::Channel() : _name(""),_topic(""),_users(),  _userLimit(-1), _password(""), _operators(), _isInviteOnly(false), _isTopicRestricted(false)
 {
 }
 
-Channel::Channel(const std::string &name) : _name(name), _users(), _userLimit(-1), _password(""), _operators(), _isInviteOnly(false), _isTopicRestricted(false)
+Channel::Channel(const std::string &name) : _name(name), _topic(""),_users(), _userLimit(-1), _password(""), _operators(), _isInviteOnly(false), _isTopicRestricted(false)
 {
 }
 
-Channel::Channel(const Channel &copy) : _name(copy._name), _users(copy._users), _userLimit(copy._userLimit), 
+Channel::Channel(const Channel &copy) : _name(copy._name), _topic(copy._topic),_users(copy._users), _userLimit(copy._userLimit), 
       _password(copy._password), _operators(copy._operators), 
       _isInviteOnly(copy._isInviteOnly), _isTopicRestricted(copy._isTopicRestricted)
 {
@@ -26,6 +26,7 @@ Channel& Channel::operator=(const Channel &other)
 	 if (this != &other)
     {
         _name = other._name;
+		_topic = other._topic;
         _users = other._users;
         _userLimit = other._userLimit;
         _password = other._password;
@@ -58,6 +59,10 @@ bool 		Channel::getTopicRestricted(){
 	return this->_isTopicRestricted;
 }
 
+std::string Channel::getTopic() const
+{
+	return this->_topic;
+}
 
 //#### SETTERS
 
@@ -80,6 +85,10 @@ void		Channel::setInviteOnly(bool invite){
 
 void		Channel::setTopicRestricted(bool restriction){
 	this->_isTopicRestricted = restriction;
+}
+
+void Channel::setTopic(const std::string &topic) {
+    _topic = topic;
 }
 
 //#### FUNCTIONS
