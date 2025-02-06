@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <unistd.h> 
+#include<vector>
 
 
 #define RED "\e[1;31m" 
@@ -21,6 +22,7 @@ class Client
 
         bool _isRegistered;
         bool _isLogged;
+        std::vector<std::string> _chaninvitations; 
     
     public : 
         Client();
@@ -38,6 +40,7 @@ class Client
         std::string getNickname();
         std::string getUser();
         std::string getHostname();
+        bool getChanInvitation( std::string name);
 
         void setFd(int fd);
         void setRegister(bool Registered);
@@ -46,5 +49,7 @@ class Client
         void setBuffer(std::string received);
         void setUser(std::string username);
         void setNickname(std::string nickname);
+
+        void  addChannelInvitation(std::string name);
 
 };

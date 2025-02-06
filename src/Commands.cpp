@@ -586,3 +586,50 @@ void	Server::password_mode(char c, Channel *chan, int fd, std::string pass){
 	}	
 }
 
+//##### INVITE #####
+
+void	Server::cmd_invite(std::vector<std::string> splitted_cmd, int fd)
+{
+	if (splitted_cmd.size() < 3)
+	{
+		SendResponse(fd, ERR_NOTENOUGHPARAM(getNicknameFromFd(fd)));
+		return ;
+	}
+	std::string chan_name = splitted_cmd[2];
+	if (!checkExist_chan(chan_name))
+	{
+		SendResponse(fd, ERR_NOSUCHCHANNEL(chan_name));
+		return;
+	}
+	if (!getChan(chan_name)->isUserInChannel(getNicknameFromFd(fd)))
+	{
+		SendResponse(fd, ERR_NOTONCHANNEL(getNicknameFromFd(fd)));
+		return;
+	}
+	if (getChan(chan_name)->isUserInChannel(splitted_cmd[1]))
+	{
+		SendResponse(fd, ERR_USERONCHANNEL(splitted_cmd[1], splitted_cmd[2]));
+		return;
+	}
+	Client *clt = getClientFromNickname(splitted_cmd[1]);
+	if (!clt)
+	{
+		SendResponse(fd, ERR_NOSUCHNICK(splitted_cmd[1]));
+		return;
+	}
+	if (getChan(chan_name)->getInviteOnly() && !getChan(chan_name)->isOperator(getNicknameFromFd(fd)))
+	{
+		SendResponse(fd, ERR_NOTOPERATOR(getNicknameFromFd(fd)));
+		return;
+	}
+	if (getChan(chan_name)->getUserLimit() != -1 && ((int)getChan(chan_name)->getUser().size()) >= getChan(chan_name)->getUserLimit())
+	{
+		SendResponse(fd, ERR_CHANNELFULL(clt->getNickname(), chan_name));
+		return;
+	}
+	clt->addChannelInvitation(chan_name);
+	std::string rep1 = ": 341 "+ getClient(fd)->getNickname()+" "+ clt->getNickname()+" "+ splitted_cmd[2]+"\r\n";
+		SendResponse(fd, rep1);
+	std::string rep2 = ":"+ clt->getHostname() + " INVITE " + clt->getNickname() + " " + splitted_cmd[2]+"\r\n";
+		SendResponse(clt->getFd(), rep2);
+}

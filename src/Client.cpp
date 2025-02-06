@@ -59,6 +59,15 @@ std::string Client::getHostname(){
 	return hostname;
 }
 
+ bool Client::getChanInvitation( std::string name){
+    for (size_t i = 0; i < _chaninvitations.size(); i++)
+    {
+        if (name == _chaninvitations[i])
+            return(true);
+    }
+    return(false);
+ }
+
 void Client::setFd(int fd){
     this->fd = fd;
 }
@@ -89,3 +98,12 @@ void Client::setNickname(std::string nickname){
     this->_nickname = nickname;
     
 }
+
+ void  Client::addChannelInvitation(std::string name){
+    for(size_t i = 0; i < _chaninvitations.size(); i++)
+    {
+        if (name == _chaninvitations[i])
+            return;
+    }
+    _chaninvitations.push_back(name);
+ }

@@ -67,6 +67,7 @@ class Server{
 		void cmd_privmsg(std::string command_full, int fd);
 		void cmd_kick(std::vector<std::string> splitted_cmd, std::string command_full, int fd);
         void cmd_mode(std::vector<std::string> splitted_cmd, int fd);
+        void cmd_invite(std::vector<std::string> splitted_cmd, int fd);
 
         static void SignalHandler(int signum);
 

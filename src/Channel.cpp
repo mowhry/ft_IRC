@@ -42,9 +42,8 @@ std::string Channel::getName() const
 	return this->_name;
 }
 
-
-int	Channel::getUserLimit(){
-	return this->_userLimit;
+int Channel::getUserLimit(){
+	return (size_t) this->_userLimit;
 }
 
 std::string Channel::getPassword(){
