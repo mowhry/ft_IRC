@@ -51,5 +51,7 @@ class Client
         void setNickname(std::string nickname);
 
         void  addChannelInvitation(std::string name);
+		bool  isInvitedByChannel(std::string name);
+		void removeChannelInvitation(std::string name);
 
 };

@@ -107,3 +107,25 @@ void Client::setNickname(std::string nickname){
     }
     _chaninvitations.push_back(name);
  }
+
+ bool  Client::isInvitedByChannel(std::string name)
+ {
+	for (size_t i = 0; i < _chaninvitations.size(); i++)
+	{
+		if(name == _chaninvitations[i])
+			return (true);
+	}
+	return (false);
+ }
+
+ void Client::removeChannelInvitation(std::string name)
+{
+    for (size_t i = 0; i < _chaninvitations.size(); i++)
+    {
+        if (_chaninvitations[i] == name)
+        {
+            _chaninvitations.erase(_chaninvitations.begin() + i);
+            return;
+        }
+    }
+}

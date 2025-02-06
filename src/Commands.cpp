@@ -67,6 +67,16 @@ void Server::cmd_join(std::vector<std::string> splitted_cmd, int fd)
 		return ;
 	}
 
+	//check mode i 
+	if (channel.getInviteOnly() == true && cli->isInvitedByChannel(chan_name) == false)
+	{
+		SendResponse(fd, ": 473 "+nick+" "+splitted_cmd[1]+" :Cannot join channel (invite only)\r\n");
+		return ;
+	}
+
+	//remove channel from the invitelistof the client if it exist
+	cli->removeChannelInvitation(chan_name);
+
 	channel.addUser(cli);
 	if (channel.getUser().size() == 1) 
 	{
