@@ -2,12 +2,13 @@
 
 //####### CONSTRUCTORS & DESTRUCTOR
 
-Client::Client() : IPadd(""), _nickname(""), _username(""), _buffer(""), _isRegistered(false), _isLogged(false) {
-
+Client::Client() : fd(-1), IPadd(""), _nickname(""), _username(""), _buffer(""), _isRegistered(false), _isLogged(false) {
+    _chaninvitations.clear();
 }
 
-Client::Client(Client const &src) {
-    *this = src;
+Client::Client(Client const &src) : fd(src.fd), IPadd(src.IPadd), _nickname(src._nickname), _username(src._username),
+      _buffer(src._buffer), _isRegistered(src._isRegistered), _isLogged(src._isLogged) {
+    _chaninvitations = src._chaninvitations; 
 }
 
 Client::~Client(){
@@ -17,8 +18,16 @@ Client::~Client(){
 //####### OPERATOR OVERLOAD
 
 Client & Client::operator=(Client const &src){
-    this->fd=src.fd;
-    this->IPadd = src.IPadd;
+        if (this != &src) {
+        this->fd = src.fd;
+        this->IPadd = src.IPadd;
+        this->_nickname = src._nickname;
+        this->_username = src._username;
+        this->_buffer = src._buffer;
+        this->_isRegistered = src._isRegistered;
+        this->_isLogged = src._isLogged;
+        this->_chaninvitations = src._chaninvitations;
+    }
     return (*this);
 }
 

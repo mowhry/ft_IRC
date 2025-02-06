@@ -8,12 +8,11 @@ Server::Server(Server const &src){
 }
 
 
-Server::Server(std::string name, std::string port, std::string password) 
-{
-    this->_name = name;
-    this->_port = atoi(port.c_str());
-    this->_password = password;
-    this->clients.reserve(MAX_CLIENTS);
+Server::Server(std::string name, std::string port, std::string password) : _name(name), _port(atoi(port.c_str())), _password(password), SerSocketFd(-1) {
+    clients.reserve(MAX_CLIENTS);
+    clients.clear();  
+    fds.clear();      
+    channels.clear(); 
 }
 
 Server::~Server(){

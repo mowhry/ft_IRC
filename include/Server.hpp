@@ -30,8 +30,8 @@ class Channel;
 class Server{
 
     private : 
-        int _port;
         std::string _name;
+		int _port;
         std::string _password;
         int SerSocketFd;
         static bool Signal;
