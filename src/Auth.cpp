@@ -61,25 +61,25 @@ void Server::cmd_nick(std::vector<std::string> splitted_cmd, int fd){
         return;
     }
     if (!IsValidNick(splitted_cmd[1], fd))
+    {
+        if (cli->getNickname() == "")
+        {
+            ClearClients(fd);
+            close(fd);
+        }
         return;
+    }
+    else
+        cli->setNickAcceptance(true);
     if(cli && cli->getRegister())
     {
         std::string old;
 		old = cli->getNickname();
         cli->setNickname(splitted_cmd[1]);
-        //std::cout << "nouveau nickname : " << cli->getNickname() << std::endl;
-        //AJOUTER LE CHANGEMENT DE NICKNAME DANS TOUS LES CHANNELS
+
         if (!old.empty() && old != splitted_cmd[1])
         {
-				/*if(old == "*" && !cli->getUser().empty() )
-				{
-					cli->setLog(true);
-                     std::cout << GRE << "Client " << fd << " connected" << WHI << std::endl;
-					//SendResponse(fd, RPL_CONNECTED(cli->getNickname()));
-					SendResponse(fd, RPL_NICKCHANGE(cli->getNickname(),splitted_cmd[1]));
-				}
-				else*/
-					SendResponse(fd, RPL_NICKCHANGE(old,splitted_cmd[1]));
+				SendResponse(fd, RPL_NICKCHANGE(old,splitted_cmd[1]));
 				return;
 			}
 			
@@ -97,10 +97,11 @@ void Server::cmd_nick(std::vector<std::string> splitted_cmd, int fd){
 }
 
 void Server::cmd_user(std::string cmd, int fd){
-
+    if (!getClient(fd))
+        return;
     std::vector<std::string> splitted_cmd = split(cmd);
 	Client *cli = getClient(fd); 
-	if((cli && splitted_cmd.size() < 5))
+	if(cli && splitted_cmd.size() < 5)
 	{   
         SendResponse(fd, ERR_NOTENOUGHPARAM(cli->getNickname())); 
         return; 

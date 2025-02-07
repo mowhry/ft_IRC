@@ -22,6 +22,7 @@ class Client
 
         bool _isRegistered;
         bool _isLogged;
+        bool _nickaccepted;
         std::vector<std::string> _chaninvitations; 
     
     public : 
@@ -40,6 +41,7 @@ class Client
         std::string getNickname();
         std::string getUser();
         std::string getHostname();
+        bool getNickAcceptance();
         bool getChanInvitation( std::string name);
 
         void setFd(int fd);
@@ -49,6 +51,7 @@ class Client
         void setBuffer(std::string received);
         void setUser(std::string username);
         void setNickname(std::string nickname);
+        void setNickAcceptance(bool accepted);
 
         void  addChannelInvitation(std::string name);
 		bool  isInvitedByChannel(std::string name);

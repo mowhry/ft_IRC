@@ -2,12 +2,12 @@
 
 //####### CONSTRUCTORS & DESTRUCTOR
 
-Client::Client() : fd(-1), IPadd(""), _nickname(""), _username(""), _buffer(""), _isRegistered(false), _isLogged(false) {
+Client::Client() : fd(-1), IPadd(""), _nickname(""), _username(""), _buffer(""), _isRegistered(false), _isLogged(false), _nickaccepted(false) {
     _chaninvitations.clear();
 }
 
 Client::Client(Client const &src) : fd(src.fd), IPadd(src.IPadd), _nickname(src._nickname), _username(src._username),
-      _buffer(src._buffer), _isRegistered(src._isRegistered), _isLogged(src._isLogged) {
+      _buffer(src._buffer), _isRegistered(src._isRegistered), _isLogged(src._isLogged), _nickaccepted(src._nickaccepted){
     _chaninvitations = src._chaninvitations; 
 }
 
@@ -26,6 +26,7 @@ Client & Client::operator=(Client const &src){
         this->_buffer = src._buffer;
         this->_isRegistered = src._isRegistered;
         this->_isLogged = src._isLogged;
+        this->_nickaccepted = src._nickaccepted;
         this->_chaninvitations = src._chaninvitations;
     }
     return (*this);
@@ -77,6 +78,10 @@ std::string Client::getHostname(){
     return(false);
  }
 
+bool Client::getNickAcceptance(){
+    return this->_nickaccepted;
+}
+
 void Client::setFd(int fd){
     this->fd = fd;
 }
@@ -106,6 +111,10 @@ void Client::setUser(std::string username){
 void Client::setNickname(std::string nickname){
     this->_nickname = nickname;
     
+}
+
+void Client::setNickAcceptance(bool accepted){
+    this->_nickaccepted = accepted;
 }
 
  void  Client::addChannelInvitation(std::string name){

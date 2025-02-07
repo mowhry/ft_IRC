@@ -132,7 +132,7 @@ void Server::cmd_join(std::vector<std::string> splitted_cmd, int fd)
 	{
 		if (channel.isOperator(members[i]->getNickname()) == true)
 		{
-			std::cout << "OPERATOR FOUND" << std::endl;
+
 			userList << "@" << members[i]->getNickname() << " ";
 		}
 		else
