@@ -50,7 +50,7 @@ Make sure you have these in place before compiling the project.
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/ft_irc.git
+   git clone https://github.com/mowhry/ft_irc.git
    cd ft_irc
 2. **Usage:**
    Once the server is compiled, you can run it with:
